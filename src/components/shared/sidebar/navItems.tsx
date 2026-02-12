@@ -1,44 +1,44 @@
-import { MdOutlineDashboard } from "react-icons/md";
-import { TbTruckDelivery } from "react-icons/tb";
-import { RiCoupon2Line } from "react-icons/ri";
-import { TbTag } from "react-icons/tb";
-import { TbBriefcase } from "react-icons/tb";
-import { MdOutlineShoppingCart } from "react-icons/md";
+import { LayoutDashboard, ShoppingCart, Truck, Package } from "lucide-react";
 
 export const navItems = [
   {
     title: "Dashboard",
     url: "/",
-    icon: <MdOutlineDashboard />,
+    icon: <LayoutDashboard />,
   },
   {
     title: "Products",
     url: "/products",
-    icon: <MdOutlineShoppingCart />,
+    icon: <ShoppingCart />,
   },
-  {
-    title: "Categories",
-    url: "/categories",
-    icon: <TbTag />,
-  },
-  {
-    title: "Customers",
-    url: "/customers",
-    // icon: <LuUsers2 />,
-  },
+  // {
+  //   title: "Categories",
+  //   url: "/categories",
+  //   icon: <TbTag />,
+  // },
+  // {
+  //   title: "Customers",
+  //   url: "/customers",
+  //   icon: <LuUsers2 />,
+  // },
   {
     title: "Orders",
     url: "/orders",
-    icon: <TbTruckDelivery />,
+    icon: <Truck />,
   },
   {
-    title: "Coupons",
-    url: "/coupons",
-    icon: <RiCoupon2Line />,
+    title: "Swap Request",
+    url: "/swap-request",
+    icon: <Package />,
   },
-  {
-    title: "Staff",
-    url: "/staff",
-    icon: <TbBriefcase />,
-  },
+  // {
+  //   title: "Coupons",
+  //   url: "/coupons",
+  //   icon: <RiCoupon2Line />,
+  // },
+  // {
+  //   title: "Staff",
+  //   url: "/staff",
+  //   icon: <TbBriefcase />,
+  // },
 ];
