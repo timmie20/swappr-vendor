@@ -10,7 +10,6 @@ import TableError from "@/components/shared/table/TableError";
 
 import { getSearchParams } from "@/helpers/getSearchParams";
 import { fetchCategories } from "@/services/categories";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { RowSelectionProps } from "@/types/data-table";
 import { useAuthorization } from "@/hooks/use-authorization";
 
@@ -30,7 +29,7 @@ export default function AllCategories({
   } = useQuery({
     queryKey: ["categories", page, limit, search],
     queryFn: () =>
-      fetchCategories(createBrowserClient(), { page, limit, search }),
+      fetchCategories({ page, limit, search }),
     placeholderData: keepPreviousData,
   });
 

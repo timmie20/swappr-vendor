@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import Typography from "@/components/ui/typography";
 import { fetchNotificationsCount } from "@/services/notifications";
-import { createBrowserClient } from "@/lib/supabase/client";
 
 const NotificationsBadge = ({ staffId }: { staffId: string }) => {
   const {
@@ -14,7 +13,7 @@ const NotificationsBadge = ({ staffId }: { staffId: string }) => {
     isError,
   } = useQuery({
     queryKey: ["notifications", "notifications-count"],
-    queryFn: () => fetchNotificationsCount(createBrowserClient(), { staffId }),
+    queryFn: () => fetchNotificationsCount({ staffId }),
   });
 
   if (isLoading || isError || !notificationCount) return null;

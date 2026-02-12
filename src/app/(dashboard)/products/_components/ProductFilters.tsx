@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import FetchDropdownContainer from "@/components/shared/FetchDropdownContainer";
 
 import { sortToParamsMap, getSortFromParams } from "./sortParams";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { fetchCategoriesDropdown } from "@/services/categories";
 
 export default function ProductFilters() {
@@ -36,7 +35,7 @@ export default function ProductFilters() {
     isError,
   } = useQuery({
     queryKey: ["categories", "dropdown"],
-    queryFn: () => fetchCategoriesDropdown(createBrowserClient()),
+    queryFn: () => fetchCategoriesDropdown(),
     staleTime: 5 * 60 * 1000,
   });
 

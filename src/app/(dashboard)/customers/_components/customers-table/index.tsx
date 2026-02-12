@@ -10,7 +10,6 @@ import TableError from "@/components/shared/table/TableError";
 
 import { getSearchParams } from "@/helpers/getSearchParams";
 import { fetchCustomers } from "@/services/customers";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { useAuthorization } from "@/hooks/use-authorization";
 
 export default function AllCustomers() {
@@ -26,7 +25,7 @@ export default function AllCustomers() {
   } = useQuery({
     queryKey: ["customers", page, limit, search],
     queryFn: () =>
-      fetchCustomers(createBrowserClient(), { page, limit, search }),
+      fetchCustomers({ page, limit, search }),
     placeholderData: keepPreviousData,
   });
 

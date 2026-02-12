@@ -1,5 +1,4 @@
 import { Bell } from "lucide-react";
-import { redirect } from "next/navigation";
 
 import {
   Popover,
@@ -13,12 +12,15 @@ import NotificationContent from "./NotificationContent";
 import { getUser } from "@/helpers/getUser";
 
 export default async function Notifications() {
+  // TODO: Replace with actual auth check when backend is ready
+  // For now, using mock user for development
   const user = await getUser();
-  const staffId = user?.id;
+  const staffId = user?.id || 'mock-vendor-id';
 
-  if (!staffId) {
-    redirect("/login");
-  }
+  // TODO: Re-enable auth redirect once backend authentication is implemented
+  // if (!staffId) {
+  //   redirect("/login");
+  // }
 
   return (
     <div className="relative">

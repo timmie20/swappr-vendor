@@ -1,27 +1,30 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+/**
+ * Coupons Service
+ *
+ * TODO: Replace with actual backend API calls
+ * Currently using placeholder functions from api-client
+ */
 
-import { Database } from "@/types/supabase";
+import { fetchCoupons as fetchCouponsAPI } from "@/lib/api-client";
 import { Coupon, FetchCouponsParams, FetchCouponsResponse } from "./types";
-import { queryPaginatedTable } from "@/helpers/queryPaginatedTable";
 
 export async function fetchCoupons(
-  client: SupabaseClient<Database>,
-  { page = 1, limit = 10, search }: FetchCouponsParams
+  params: FetchCouponsParams,
 ): Promise<FetchCouponsResponse> {
-  let query = client.from("coupons").select("*", { count: "exact" });
+  // TODO: Replace with actual API call
+  // const response = await fetchCouponsAPI(params);
 
-  if (search) {
-    query = query.or(`campaign_name.ilike.%${search}%,code.ilike.%${search}%`);
-  }
+  console.warn(
+    "fetchCoupons: Using placeholder - replace with actual API call",
+  );
 
-  query = query.order("created_at", { ascending: false });
-
-  const paginatedCoupons = await queryPaginatedTable<Coupon, "coupons">({
-    name: "coupons",
-    page,
-    limit,
-    query,
-  });
-
-  return paginatedCoupons;
+  return {
+    data: [],
+    pagination: {
+      page: params.page || 1,
+      limit: params.limit || 10,
+      totalPages: 0,
+      totalItems: 0,
+    },
+  };
 }

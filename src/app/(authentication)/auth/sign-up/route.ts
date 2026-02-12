@@ -1,12 +1,10 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-
+import { signupVendor } from "@/lib/api-client";
 import { signupFormSchema } from "@/app/(authentication)/signup/_components/schema";
 import validateFormData from "@/helpers/validateFormData";
 
 export async function POST(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
+  // TODO: Replace with actual backend API registration
 
   // Get form fields
   const { name, email, password, confirmPassword, privacy } =
@@ -26,29 +24,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ errors }, { status: 401 });
   }
 
-  // Attempt to sign up the user with the provided email and password using Supabase's signUp method.
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name: name,
-      },
-    },
-  });
+  try {
+    // TODO: This will call the backend API to register the vendor
+    const response = await signupVendor(email, password, name);
 
-  // If there is an error during sign-up, return a JSON response with the error message and a 401 status.
-  if (error) {
+    // TODO: Store the JWT token from backend in a secure cookie or local storage
+    // For now, just returning success
+
+    return NextResponse.json({
+      success: true,
+      user: response.data.user,
+      token: response.data.token,
+    });
+  } catch (error: any) {
+    console.error("Signup error:", error);
+
     return NextResponse.json(
       {
         errors: {
-          email: error.message,
+          email: error.response?.data?.message || "Failed to create account",
         },
       },
-      { status: 401 }
+      { status: 401 },
     );
   }
-
-  // If sign-up is successful, return a JSON response indicating success.
-  return NextResponse.json({ success: true });
 }

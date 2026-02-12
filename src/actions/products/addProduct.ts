@@ -2,15 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createServerActionClient } from "@/lib/supabase/server-action";
+import { createProduct } from "@/lib/api-client";
 import { productFormSchema } from "@/app/(dashboard)/products/_components/form/schema";
 import { formatValidationErrors } from "@/helpers/formatValidationErrors";
 import { ProductServerActionResponse } from "@/types/server-action";
 
 export async function addProduct(
-  formData: FormData
+  formData: FormData,
 ): Promise<ProductServerActionResponse> {
-  const supabase = createServerActionClient();
+  // TODO: Remove Supabase client - using API client instead
 
   const parsedData = productFormSchema.safeParse({
     name: formData.get("name"),
@@ -28,80 +28,36 @@ export async function addProduct(
   if (!parsedData.success) {
     return {
       validationErrors: formatValidationErrors(
-        parsedData.error.flatten().fieldErrors
+        parsedData.error.flatten().fieldErrors,
       ),
     };
   }
 
-  const { image, ...productData } = parsedData.data;
+  try {
+    // TODO: Replace with actual backend API call
+    // Image upload will be handled by the backend
+    const response = await createProduct(formData);
 
-  let imageUrl: string | undefined;
+    revalidatePath("/products");
 
-  if (image instanceof File && image.size > 0) {
-    const fileExt = image.name.split(".").pop();
-    const fileName = `products/${
-      parsedData.data.slug
-    }-${Date.now()}.${fileExt}`;
+    return {
+      success: true,
+      product: response.data.product,
+    };
+  } catch (error: any) {
+    console.error("Failed to create product:", error);
 
-    const { error: uploadError, data: uploadData } = await supabase.storage
-      .from("assets")
-      .upload(fileName, image);
-
-    if (uploadError) {
-      console.error("Image upload failed:", uploadError);
-      return { validationErrors: { image: "Failed to upload image" } };
+    // Handle validation errors from backend
+    if (error.response?.status === 400) {
+      return {
+        validationErrors: error.response.data.errors || {},
+      };
     }
 
-    const { data: publicUrlData } = supabase.storage
-      .from("assets")
-      .getPublicUrl(uploadData.path);
-
-    imageUrl = publicUrlData.publicUrl;
+    return {
+      dbError:
+        error.response?.data?.message ||
+        "Something went wrong. Please try again later.",
+    };
   }
-
-  const { data: newProduct, error: dbError } = await supabase
-    .from("products")
-    .insert({
-      name: productData.name,
-      description: productData.description,
-      cost_price: productData.costPrice,
-      selling_price: productData.salesPrice,
-      stock: productData.stock,
-      min_stock_threshold: productData.minStockThreshold,
-      category_id: productData.category,
-      slug: productData.slug,
-      sku: productData.sku,
-      published: false,
-      image_url: imageUrl as string,
-    })
-    .select()
-    .single();
-
-  if (dbError) {
-    if (dbError.code === "23505") {
-      const match = dbError.details.match(/\(([^)]+)\)/);
-      const uniqueColumn = match ? match[1] : null;
-
-      if (uniqueColumn === "slug") {
-        return {
-          validationErrors: {
-            slug: "This product slug is already in use. Please choose a different one.",
-          },
-        };
-      } else if (uniqueColumn === "sku") {
-        return {
-          validationErrors: {
-            sku: "This product SKU is already assigned to an existing item. Please enter a different SKU.",
-          },
-        };
-      }
-    }
-
-    console.error("Database insert failed:", dbError);
-    return { dbError: "Something went wrong. Please try again later." };
-  }
-
-  revalidatePath("/products");
-
-  return { success: true, product: newProduct };
 }

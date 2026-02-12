@@ -10,7 +10,6 @@ import TableError from "@/components/shared/table/TableError";
 
 import { getSearchParams } from "@/helpers/getSearchParams";
 import { fetchCoupons } from "@/services/coupons";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { RowSelectionProps } from "@/types/data-table";
 import { useAuthorization } from "@/hooks/use-authorization";
 
@@ -29,7 +28,7 @@ export default function AllCoupons({
     refetch,
   } = useQuery({
     queryKey: ["coupons", page, limit, search],
-    queryFn: () => fetchCoupons(createBrowserClient(), { page, limit, search }),
+    queryFn: () => fetchCoupons({ page, limit, search }),
     placeholderData: keepPreviousData,
   });
 

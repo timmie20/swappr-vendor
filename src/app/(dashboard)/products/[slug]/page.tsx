@@ -10,7 +10,6 @@ import { ProductBadgeVariants } from "@/constants/badge";
 import { EditProductSheet } from "./_components/EditProductSheet";
 
 import { fetchProductDetails } from "@/services/products";
-import { createServerClient } from "@/lib/supabase/server";
 
 type PageParams = {
   params: {
@@ -22,7 +21,7 @@ export async function generateMetadata({
   params: { slug },
 }: PageParams): Promise<Metadata> {
   try {
-    const { product } = await fetchProductDetails(createServerClient(), {
+    const { product } = await fetchProductDetails({
       slug,
     });
 
@@ -34,7 +33,7 @@ export async function generateMetadata({
 
 export default async function ProductDetails({ params: { slug } }: PageParams) {
   try {
-    const { product } = await fetchProductDetails(createServerClient(), {
+    const { product } = await fetchProductDetails({
       slug,
     });
 

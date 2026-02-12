@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { createBrowserClient } from "@/lib/supabase/client";
 import { fetchCategoriesDropdown } from "@/services/categories";
 import FetchDropdownContainer from "@/components/shared/FetchDropdownContainer";
 
@@ -42,7 +41,7 @@ const FormCategoryInput = forwardRef(function FormCategoryInputRender<
     isError,
   } = useQuery({
     queryKey: ["categories", "dropdown"],
-    queryFn: () => fetchCategoriesDropdown(createBrowserClient()),
+    queryFn: () => fetchCategoriesDropdown(),
     staleTime: 5 * 60 * 1000,
   });
 
