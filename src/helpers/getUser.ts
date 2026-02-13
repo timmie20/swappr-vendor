@@ -1,18 +1,26 @@
-import { User } from "@supabase/auth-helpers-nextjs";
+// TODO: This helper is deprecated - authentication now handled by backend API
+// Returning mock user data for development purposes
+// Remove this file once all components are updated to use UserContext
 
-import { createServerClient } from "@/lib/supabase/server";
+type User = {
+  id: string;
+  email: string;
+  [key: string]: any;
+};
+
 /**
- * getUser - Function to retrieve user information from Supabase.
- * @returns A Promise that resolves to the user data.
+ * getUser - Returns mock user data for development
+ * @deprecated Use UserContext (useUser hook) instead for client components
+ * @returns A Promise that resolves to mock user data
  */
 export async function getUser(): Promise<User | null> {
-  const supabase = createServerClient();
+  // TODO: Replace with actual auth check when backend is ready
+  // For now, return mock vendor user for development
+  console.warn("getUser() is deprecated - use UserContext instead");
 
-  // Call Supabase's getUser() method to retrieve user data.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Return the user data obtained from Supabase.
-  return user;
+  return {
+    id: "mock-vendor-id",
+    email: "vendor@swappr.com",
+    name: "Mock Vendor",
+  };
 }

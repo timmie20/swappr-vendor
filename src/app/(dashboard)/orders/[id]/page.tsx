@@ -20,7 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { getDiscount } from "@/helpers/getDiscount";
 import { OrderBadgeVariants } from "@/constants/badge";
 import { fetchOrderDetails } from "@/services/orders";
-import { createServerClient } from "@/lib/supabase/server";
 import { InvoiceActions } from "./_components/InvoiceActions";
 
 type PageParams = {
@@ -33,7 +32,7 @@ export async function generateMetadata({
   params: { id },
 }: PageParams): Promise<Metadata> {
   try {
-    const { order } = await fetchOrderDetails(createServerClient(), {
+    const { order } = await fetchOrderDetails({
       id,
     });
 
@@ -45,7 +44,7 @@ export async function generateMetadata({
 
 export default async function Order({ params: { id } }: PageParams) {
   try {
-    const { order } = await fetchOrderDetails(createServerClient(), {
+    const { order } = await fetchOrderDetails({
       id,
     });
 

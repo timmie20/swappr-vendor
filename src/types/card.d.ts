@@ -1,5 +1,5 @@
 export interface DashboardCard {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   title: string;
   value: string;
   className: string;

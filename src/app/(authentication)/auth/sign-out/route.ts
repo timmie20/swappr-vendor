@@ -1,14 +1,19 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-
+import { logoutVendor } from "@/lib/api-client";
 import { siteUrl } from "@/constants/siteUrl";
 
 export async function POST() {
-  const supabase = createRouteHandlerClient({ cookies });
+  // TODO: Replace with actual backend API logout
+  // This should clear the JWT token and invalidate the session
 
-  // Sign the user out by invoking the signOut method of the Supabase auth client.
-  await supabase.auth.signOut();
+  try {
+    await logoutVendor();
+
+    // TODO: Clear authentication cookies/tokens here
+    // For now, just redirect to login
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
 
   // Redirect the user to the login page.
   return NextResponse.redirect(`${siteUrl}/login`, {

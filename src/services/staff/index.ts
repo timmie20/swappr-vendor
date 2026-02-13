@@ -1,6 +1,14 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+/**
+ * Staff Service
+ *
+ * TODO: Replace with actual backend API calls
+ * Currently using placeholder functions from api-client
+ */
 
-import { Database } from "@/types/supabase";
+import {
+  fetchStaff as fetchStaffAPI,
+  getVendorProfile,
+} from "@/lib/api-client";
 import {
   Staff,
   StaffRolesDropdown,
@@ -8,78 +16,43 @@ import {
   FetchStaffResponse,
   SBStaff,
 } from "./types";
-import { queryPaginatedTable } from "@/helpers/queryPaginatedTable";
 
 export async function fetchStaff(
-  client: SupabaseClient<Database>,
-  { page = 1, limit = 10, search, role }: FetchStaffParams
+  params: FetchStaffParams,
 ): Promise<FetchStaffResponse> {
-  const selectQuery = `
-    *,
-    staff_roles!inner (
-      name,
-      display_name
-    )
-  `;
+  // TODO: Replace with actual API call
+  // const response = await fetchStaffAPI(params);
 
-  let query = client.from("staff").select(selectQuery, { count: "exact" });
+  console.warn("fetchStaff: Using placeholder - replace with actual API call");
 
-  if (search) {
-    query = query.or(
-      `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
-    );
-  }
-
-  if (role) {
-    query = query.eq("staff_roles.name", role);
-  }
-
-  query = query.order("created_at", { ascending: false });
-
-  const paginatedStaff = await queryPaginatedTable<Staff, "staff">({
-    name: "staff",
-    page,
-    limit,
-    query,
-  });
-
-  return paginatedStaff;
+  return {
+    data: [],
+    pagination: {
+      page: params.page || 1,
+      limit: params.limit || 10,
+      totalPages: 0,
+      totalItems: 0,
+    },
+  };
 }
 
-export async function fetchStaffRolesDropdown(
-  client: SupabaseClient<Database>
-): Promise<StaffRolesDropdown[]> {
-  const { data, error } = await client
-    .from("staff_roles")
-    .select("name, display_name");
+export async function fetchStaffRolesDropdown(): Promise<StaffRolesDropdown[]> {
+  // TODO: Replace with actual API call
 
-  if (error) {
-    console.error("Error fetching staff roles:", error.message);
-    throw new Error(error.message);
-  }
+  console.warn(
+    "fetchStaffRolesDropdown: Using placeholder - replace with actual API call",
+  );
 
-  return data ?? [];
+  return [];
 }
 
-export async function fetchStaffDetails(
-  client: SupabaseClient<Database>
-): Promise<SBStaff | null> {
-  const {
-    data: { user },
-  } = await client.auth.getUser();
+export async function fetchStaffDetails(): Promise<SBStaff | null> {
+  // TODO: Replace with actual API call
+  // const response = await getVendorProfile();
 
-  if (!user) return null;
+  console.warn(
+    "fetchStaffDetails: Using placeholder - replace with actual API call",
+  );
 
-  const { data: profile, error } = await client
-    .from("staff")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (error) {
-    console.error("Error fetching staff profile:", error);
-    return null;
-  }
-
-  return profile;
+  return null;
 }

@@ -1,13 +1,17 @@
 "use client";
 
-import { createContext, useContext, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { User } from "@supabase/supabase-js";
+import { createContext, useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getVendorProfile } from "@/lib/api-client";
 
-import { Tables } from "@/types/supabase";
-import { createBrowserClient } from "@/lib/supabase/client";
+// TODO: Update these types to match backend API response
+export type UserRole = "vendor" | "admin" | "staff";
 
-export type UserRole = Tables<"staff_roles">["name"];
+type User = {
+  id: string;
+  email: string;
+  name: string | null;
+};
 
 type UserProfile = {
   name: string | null;
@@ -24,37 +28,47 @@ type UserContextType = {
 const UserContext = createContext<UserContextType>({
   user: null,
   profile: null,
-  isLoading: true,
+  isLoading: false,
 });
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const supabase = createBrowserClient();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase, queryClient]);
-
+  // TODO: Replace with actual API call when backend is ready
+  // For now, return mock data to allow development without authentication
   const { data, isLoading } = useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session?.user) {
-        return { user: null, role: null };
-      }
+      try {
+        const response = await getVendorProfile();
+        const profileData = response.data;
 
-      const { data: profile } = await supabase.rpc("get_my_profile");
-      return { user: session.user, profile: profile as UserProfile };
+        return {
+          user: {
+            id: profileData.id,
+            email: profileData.email,
+            name: profileData.name,
+          },
+          profile: {
+            name: profileData.name,
+            image_url: profileData.image_url,
+            role: profileData.role as UserRole,
+          },
+        };
+      } catch (error) {
+        console.warn("Failed to fetch user profile, using mock data");
+        // Return mock data for development
+        return {
+          user: {
+            id: "mock-vendor-id",
+            email: "vendor@swappr.com",
+            name: "Mock Vendor",
+          },
+          profile: {
+            name: "Mock Vendor",
+            image_url: null,
+            role: "vendor" as UserRole,
+          },
+        };
+      }
     },
     staleTime: Infinity,
   });

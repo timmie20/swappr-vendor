@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { createBrowserClient } from "@/lib/supabase/client";
 import { fetchCategoriesDropdown } from "@/services/categories";
 import FetchDropdownContainer from "@/components/shared/FetchDropdownContainer";
 
@@ -31,10 +30,10 @@ type FormCategoryInputProps<TFormData extends FieldValues> = {
 };
 
 const FormCategoryInput = forwardRef(function FormCategoryInputRender<
-  TFormData extends FieldValues
+  TFormData extends FieldValues,
 >(
   { control, name, label, container }: FormCategoryInputProps<TFormData>,
-  ref: Ref<HTMLButtonElement>
+  ref: Ref<HTMLButtonElement>,
 ) {
   const {
     data: categories,
@@ -42,7 +41,7 @@ const FormCategoryInput = forwardRef(function FormCategoryInputRender<
     isError,
   } = useQuery({
     queryKey: ["categories", "dropdown"],
-    queryFn: () => fetchCategoriesDropdown(createBrowserClient()),
+    queryFn: () => fetchCategoriesDropdown(),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -96,7 +95,7 @@ const FormCategoryInput = forwardRef(function FormCategoryInputRender<
     />
   );
 }) as <TFormData extends FieldValues>(
-  props: FormCategoryInputProps<TFormData> & { ref?: Ref<HTMLButtonElement> }
+  props: FormCategoryInputProps<TFormData> & { ref?: Ref<HTMLButtonElement> },
 ) => React.ReactElement;
 
 export default FormCategoryInput;

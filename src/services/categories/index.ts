@@ -1,49 +1,46 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+/**
+ * Categories Service
+ *
+ * TODO: Replace with actual backend API calls
+ * Currently using placeholder functions from api-client
+ */
 
-import { Database } from "@/types/supabase";
+import { fetchCategories as fetchCategoriesAPI } from "@/lib/api-client";
 import {
   Category,
   CategoryDropdown,
   FetchCategoriesParams,
   FetchCategoriesResponse,
 } from "./types";
-import { queryPaginatedTable } from "@/helpers/queryPaginatedTable";
 
 export async function fetchCategories(
-  client: SupabaseClient<Database>,
-  { page = 1, limit = 10, search }: FetchCategoriesParams
+  params: FetchCategoriesParams,
 ): Promise<FetchCategoriesResponse> {
-  let query = client.from("categories").select("*", { count: "exact" });
+  // TODO: Replace with actual API call
+  // const response = await fetchCategoriesAPI(params);
 
-  if (search) {
-    query = query.ilike("name", `%${search}%`);
-  }
-
-  query = query.order("created_at", { ascending: false });
-
-  const paginatedCategories = await queryPaginatedTable<Category, "categories">(
-    {
-      name: "categories",
-      page,
-      limit,
-      query,
-    }
+  console.warn(
+    "fetchCategories: Using placeholder - replace with actual API call",
   );
 
-  return paginatedCategories;
+  return {
+    data: [],
+    pagination: {
+      page: params.page || 1,
+      limit: params.limit || 10,
+      totalPages: 0,
+      totalItems: 0,
+    },
+  };
 }
 
-export async function fetchCategoriesDropdown(
-  client: SupabaseClient<Database>
-): Promise<CategoryDropdown[]> {
-  const { data, error } = await client
-    .from("categories")
-    .select("id, name, slug");
+export async function fetchCategoriesDropdown(): Promise<CategoryDropdown[]> {
+  // TODO: Replace with actual API call
+  // const response = await fetchCategoriesAPI({ limit: 1000 });
 
-  if (error) {
-    console.error("Error fetching categories:", error.message);
-    throw new Error(error.message);
-  }
+  console.warn(
+    "fetchCategoriesDropdown: Using placeholder - replace with actual API call",
+  );
 
-  return data ?? [];
+  return [];
 }

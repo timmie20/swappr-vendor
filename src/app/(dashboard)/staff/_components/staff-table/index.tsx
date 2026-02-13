@@ -10,7 +10,6 @@ import TableSkeleton from "@/components/shared/table/TableSkeleton";
 
 import { getSearchParams } from "@/helpers/getSearchParams";
 import { fetchStaff } from "@/services/staff";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { useAuthorization } from "@/hooks/use-authorization";
 
 export default function AllStaff() {
@@ -25,8 +24,7 @@ export default function AllStaff() {
     refetch,
   } = useQuery({
     queryKey: ["staff", page, limit, search, role],
-    queryFn: () =>
-      fetchStaff(createBrowserClient(), { page, limit, search, role }),
+    queryFn: () => fetchStaff({ page, limit, search, role }),
     placeholderData: keepPreviousData,
   });
 

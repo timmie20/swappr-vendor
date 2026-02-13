@@ -1,10 +1,10 @@
 import { MdOutlineDashboard } from "react-icons/md";
-import { LuUsers2 } from "react-icons/lu";
 import { TbTruckDelivery } from "react-icons/tb";
 import { RiCoupon2Line } from "react-icons/ri";
 import { TbTag } from "react-icons/tb";
 import { TbBriefcase } from "react-icons/tb";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import { LucideUsers2 } from "lucide-react";
 
 export const navItems = [
   {
@@ -25,7 +25,7 @@ export const navItems = [
   {
     title: "Customers",
     url: "/customers",
-    icon: <LuUsers2 />,
+    icon: <LucideUsers2 />,
   },
   {
     title: "Orders",
