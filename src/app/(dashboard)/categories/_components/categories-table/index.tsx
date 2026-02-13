@@ -28,8 +28,7 @@ export default function AllCategories({
     refetch,
   } = useQuery({
     queryKey: ["categories", page, limit, search],
-    queryFn: () =>
-      fetchCategories({ page, limit, search }),
+    queryFn: () => fetchCategories({ page, limit, search }),
     placeholderData: keepPreviousData,
   });
 

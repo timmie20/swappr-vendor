@@ -15,7 +15,7 @@ export default async function Notifications() {
   // TODO: Replace with actual auth check when backend is ready
   // For now, using mock user for development
   const user = await getUser();
-  const staffId = user?.id || 'mock-vendor-id';
+  const staffId = user?.id || "mock-vendor-id";
 
   // TODO: Re-enable auth redirect once backend authentication is implemented
   // if (!staffId) {

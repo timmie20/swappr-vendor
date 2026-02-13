@@ -40,7 +40,7 @@ export default function NotificationItem({ notification }: Props) {
   useEffect(() => {
     if (isError) {
       toast.error(
-        "There was an error while trying to delete notification. Please try again!"
+        "There was an error while trying to delete notification. Please try again!",
       );
     }
   }, [isError]);

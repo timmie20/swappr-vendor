@@ -24,8 +24,7 @@ export default function AllStaff() {
     refetch,
   } = useQuery({
     queryKey: ["staff", page, limit, search, role],
-    queryFn: () =>
-      fetchStaff({ page, limit, search, role }),
+    queryFn: () => fetchStaff({ page, limit, search, role }),
     placeholderData: keepPreviousData,
   });
 

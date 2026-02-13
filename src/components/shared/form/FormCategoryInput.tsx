@@ -30,10 +30,10 @@ type FormCategoryInputProps<TFormData extends FieldValues> = {
 };
 
 const FormCategoryInput = forwardRef(function FormCategoryInputRender<
-  TFormData extends FieldValues
+  TFormData extends FieldValues,
 >(
   { control, name, label, container }: FormCategoryInputProps<TFormData>,
-  ref: Ref<HTMLButtonElement>
+  ref: Ref<HTMLButtonElement>,
 ) {
   const {
     data: categories,
@@ -95,7 +95,7 @@ const FormCategoryInput = forwardRef(function FormCategoryInputRender<
     />
   );
 }) as <TFormData extends FieldValues>(
-  props: FormCategoryInputProps<TFormData> & { ref?: Ref<HTMLButtonElement> }
+  props: FormCategoryInputProps<TFormData> & { ref?: Ref<HTMLButtonElement> },
 ) => React.ReactElement;
 
 export default FormCategoryInput;

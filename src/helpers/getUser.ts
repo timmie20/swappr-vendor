@@ -16,11 +16,11 @@ type User = {
 export async function getUser(): Promise<User | null> {
   // TODO: Replace with actual auth check when backend is ready
   // For now, return mock vendor user for development
-  console.warn('getUser() is deprecated - use UserContext instead');
-  
+  console.warn("getUser() is deprecated - use UserContext instead");
+
   return {
-    id: 'mock-vendor-id',
-    email: 'vendor@swappr.com',
-    name: 'Mock Vendor',
+    id: "mock-vendor-id",
+    email: "vendor@swappr.com",
+    name: "Mock Vendor",
   };
 }

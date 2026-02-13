@@ -24,8 +24,7 @@ export default function AllCustomers() {
     refetch,
   } = useQuery({
     queryKey: ["customers", page, limit, search],
-    queryFn: () =>
-      fetchCustomers({ page, limit, search }),
+    queryFn: () => fetchCustomers({ page, limit, search }),
     placeholderData: keepPreviousData,
   });
 
