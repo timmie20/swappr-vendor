@@ -49,8 +49,8 @@ export default function WeeklySales() {
                     {
                       label: "Sales",
                       data: [400, 300, 100, 250, 200, 300, 1000],
-                      borderColor: "rgb(34, 197, 94)",
-                      backgroundColor: "rgb(34, 197, 94)",
+                      borderColor: "rgba(59, 130, 253, 1)",
+                      backgroundColor: "rgba(59, 130, 253, 1)",
                     },
                   ],
                 }}

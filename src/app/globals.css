@@ -145,6 +145,9 @@ input[type="number"]::-webkit-outer-spin-button {
 @theme inline {
   --font-family: "Poppins", sans-serif;
 
+  --font-inter: var(--font-inter);
+  --font-switzer: var(--font-switzer);
+
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
@@ -263,10 +266,8 @@ input[type="number"]::-webkit-outer-spin-button {
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-switzer;
   }
 }
