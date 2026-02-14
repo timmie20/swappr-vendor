@@ -20,11 +20,10 @@ export async function deleteProducts(
     return { dbError: "Could not find the products to delete." };
   }
 
-  const imageFileNames =
-    productsData
-      ?.map((product) => product.image_url)
-      .filter(Boolean)
-      .map((url) => `products/${url.split("/").pop()}`) ?? [];
+  const urls = (productsData as { image_url?: string }[] | null)
+    ?.map((product: { image_url?: string }) => product.image_url)
+    .filter((u): u is string => Boolean(u)) ?? [];
+  const imageFileNames = urls.map((url) => `products/${url.split("/").pop()}`);
 
   if (imageFileNames.length > 0) {
     const { error: storageError } = await supabase.storage

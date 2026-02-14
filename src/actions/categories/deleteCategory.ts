@@ -21,7 +21,7 @@ export async function deleteCategory(
     return { dbError: "Could not find the category to delete." };
   }
 
-  const imageUrl = categoryData?.image_url;
+  const imageUrl = (categoryData as { image_url?: string } | null)?.image_url;
 
   if (imageUrl) {
     const imageFileName = `categories/${imageUrl.split("/").pop()}`;

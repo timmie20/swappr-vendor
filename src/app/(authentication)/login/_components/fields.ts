@@ -1,7 +1,9 @@
-import { InputField } from "@/types/auth-input";
-
-interface LoginField extends InputField {
+interface LoginField {
   name: "email" | "password";
+  label: string;
+  placeholder: string;
+  inputType: "email" | "password";
+  autoComplete: string;
 }
 
 export const loginFields: LoginField[] = [

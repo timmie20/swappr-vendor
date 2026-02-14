@@ -22,7 +22,8 @@ export function ExportDataButtons({ tableName, action }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleExport = (format: "json" | "csv") => {
-    toast.info(`Exporting ${tableName} as ${format.toUpperCase()}...`);
+    const name = String(tableName);
+    toast.info(`Exporting ${name} as ${format.toUpperCase()}...`);
 
     startTransition(async () => {
       const result = await action();
@@ -31,9 +32,9 @@ export function ExportDataButtons({ tableName, action }: Props) {
         toast.error(result.error);
       } else if ("data" in result) {
         if (format === "json") {
-          exportAsJSON(result.data, tableName);
+          exportAsJSON(result.data, name);
         } else if (format === "csv") {
-          exportAsCSV(result.data, tableName);
+          exportAsCSV(result.data, name);
         }
       }
     });

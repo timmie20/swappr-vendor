@@ -21,7 +21,7 @@ export async function deleteCoupon(
     return { dbError: "Could not find the coupon to delete." };
   }
 
-  const imageUrl = couponData?.image_url;
+  const imageUrl = (couponData as { image_url?: string } | null)?.image_url;
 
   if (imageUrl) {
     const imageFileName = `coupons/${imageUrl.split("/").pop()}`;

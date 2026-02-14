@@ -9,8 +9,8 @@ export default function AuthFormTemplate({ image, children }: Props) {
   return (
     <section>
       <div className="p-6 min-h-dvh flex items-center">
-        <div className="bg-popover w-full max-w-md lg:max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-lg shadow-xl">
-          <div className="relative min-h-[16rem] md:min-h-[18rem] lg:min-h-[28rem]">
+        <div className="bg-popover w-full max-w-md lg:max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-lg border border-border">
+          <div className="relative min-h-64 md:min-h-72 lg:min-h-96">
             <Image
               src={image}
               alt=""

@@ -29,6 +29,7 @@ export async function editCategory(
   }
 
   const { image, ...categoryData } = parsedData.data;
+  const categoryDataTyped = categoryData as { name: string; description?: string; slug: string };
 
   let imageUrl: string | undefined;
 
@@ -44,10 +45,10 @@ export async function editCategory(
       return { dbError: "Could not find the category to update." };
     }
 
-    const oldImageUrl = oldCategoryData.image_url;
+    const oldImageUrl = (oldCategoryData as { image_url?: string }).image_url;
 
     const fileExt = image.name.split(".").pop();
-    const fileName = `categories/${categoryData.slug}-${Date.now()}.${fileExt}`;
+    const fileName = `categories/${categoryDataTyped.slug}-${Date.now()}.${fileExt}`;
 
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from("assets")
@@ -76,9 +77,9 @@ export async function editCategory(
   const { data: updatedCategory, error: dbError } = await supabase
     .from("categories")
     .update({
-      name: categoryData.name,
-      description: categoryData.description,
-      slug: categoryData.slug,
+      name: categoryDataTyped.name,
+      description: categoryDataTyped.description,
+      slug: categoryDataTyped.slug,
       ...(imageUrl && { image_url: imageUrl }),
     })
     .eq("id", categoryId)
@@ -87,7 +88,7 @@ export async function editCategory(
 
   if (dbError) {
     if (dbError.code === "23505") {
-      const match = dbError.details.match(/\(([^)]+)\)/);
+      const match = (dbError.details ?? "").match(/\(([^)]+)\)/);
       const uniqueColumn = match ? match[1] : null;
 
       if (uniqueColumn === "slug") {

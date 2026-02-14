@@ -1,46 +1,16 @@
-/**
- * Categories Service
- *
- * TODO: Replace with actual backend API calls
- * Currently using placeholder functions from api-client
- */
+/** Mock categories service */
 
-import { fetchCategories as fetchCategoriesAPI } from "@/lib/api-client";
-import {
-  Category,
-  CategoryDropdown,
-  FetchCategoriesParams,
-  FetchCategoriesResponse,
-} from "./types";
-
-export async function fetchCategories(
-  params: FetchCategoriesParams,
-): Promise<FetchCategoriesResponse> {
-  // TODO: Replace with actual API call
-  // const response = await fetchCategoriesAPI(params);
-
-  console.warn(
-    "fetchCategories: Using placeholder - replace with actual API call",
-  );
-
-  return {
-    data: [],
-    pagination: {
-      page: params.page || 1,
-      limit: params.limit || 10,
-      totalPages: 0,
-      totalItems: 0,
-    },
-  };
+export interface Category {
+  id: string;
+  name: string;
+  slug?: string;
+  [key: string]: unknown;
 }
 
-export async function fetchCategoriesDropdown(): Promise<CategoryDropdown[]> {
-  // TODO: Replace with actual API call
-  // const response = await fetchCategoriesAPI({ limit: 1000 });
+export async function fetchCategories(): Promise<Category[]> {
+  return [];
+}
 
-  console.warn(
-    "fetchCategoriesDropdown: Using placeholder - replace with actual API call",
-  );
-
+export async function fetchCategoriesDropdown(): Promise<Category[]> {
   return [];
 }

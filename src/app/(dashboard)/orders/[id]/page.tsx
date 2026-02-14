@@ -32,10 +32,8 @@ export async function generateMetadata({
   params: { id },
 }: PageParams): Promise<Metadata> {
   try {
-    const { order } = await fetchOrderDetails({
-      id,
-    });
-
+    const { order } = await fetchOrderDetails({ id });
+    if (!order) return { title: "Order not found" };
     return { title: `Order #${order.invoice_no}` };
   } catch (e) {
     return { title: "Order not found" };
@@ -44,9 +42,8 @@ export async function generateMetadata({
 
 export default async function Order({ params: { id } }: PageParams) {
   try {
-    const { order } = await fetchOrderDetails({
-      id,
-    });
+    const { order } = await fetchOrderDetails({ id });
+    if (!order) notFound();
 
     return (
       <section>
@@ -140,14 +137,14 @@ export default async function Order({ params: { id } }: PageParams) {
               </Typography>
 
               <div className="flex flex-col text-sm gap-y-0.5">
-                <Typography component="p">{order.customers.name}</Typography>
+                <Typography component="p">{order.customers?.name}</Typography>
                 <Typography component="p" className="break-words">
-                  {order.customers.email}
+                  {order.customers?.email}
                 </Typography>
-                {order.customers.phone && (
+                {order.customers?.phone && (
                   <Typography component="p">{order.customers.phone}</Typography>
                 )}
-                {order.customers.address && (
+                {order.customers?.address && (
                   <Typography component="p" className="max-w-80">
                     {order.customers.address}
                   </Typography>
@@ -179,7 +176,7 @@ export default async function Order({ params: { id } }: PageParams) {
               </TableHeader>
 
               <TableBody>
-                {order.order_items.map((orderItem, index) => (
+                {(order.order_items ?? []).map((orderItem: import("@/services/orders/types").OrderItemDetail, index: number) => (
                   <TableRow
                     key={`order-item-${index}`}
                     className="hover:bg-transparent print:border-b-print-border"
@@ -188,7 +185,7 @@ export default async function Order({ params: { id } }: PageParams) {
                       {index + 1}
                     </TableCell>
                     <TableCell className="font-medium py-3 px-6 text-card-foreground print:font-normal print:text-black">
-                      {orderItem.products.name}
+                      {orderItem.products?.name}
                     </TableCell>
                     <TableCell className="font-semibold py-3 text-center print:font-normal print:text-black">
                       {orderItem.quantity}
@@ -228,7 +225,7 @@ export default async function Order({ params: { id } }: PageParams) {
               </Typography>
 
               <Typography className="text-base capitalize font-semibold text-card-foreground tracking-wide print:text-black">
-                ${order.shipping_cost.toFixed(2)}
+                ${(order.shipping_cost ?? 0).toFixed(2)}
               </Typography>
             </div>
 
@@ -244,8 +241,8 @@ export default async function Order({ params: { id } }: PageParams) {
                 $
                 {getDiscount({
                   totalAmount: order.total_amount,
-                  shippingCost: order.shipping_cost,
-                  coupon: order.coupons,
+                  shippingCost: order.shipping_cost ?? 0,
+                  coupon: (order.coupons ?? null) as import("@/services/coupons/types").SBCoupon | null,
                 })}
               </Typography>
             </div>

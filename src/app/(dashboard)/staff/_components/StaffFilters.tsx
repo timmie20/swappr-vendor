@@ -84,7 +84,7 @@ export default function StaffFilters() {
               {!isLoading &&
                 !isError &&
                 staffRoles &&
-                staffRoles.map((role) => (
+                staffRoles.map((role: { name: string; display_name: string }) => (
                   <SelectItem
                     key={role.name}
                     value={role.name}

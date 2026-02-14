@@ -21,7 +21,7 @@ export async function deleteStaff(
     return { dbError: "Could not find the staff to delete." };
   }
 
-  const imageUrl = staffData?.image_url;
+  const imageUrl = (staffData as { image_url?: string } | null)?.image_url;
 
   if (imageUrl) {
     const imageFileName = `staff/${imageUrl.split("/").pop()}`;

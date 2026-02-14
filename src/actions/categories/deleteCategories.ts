@@ -20,11 +20,10 @@ export async function deleteCategories(
     return { dbError: "Could not find the categories to delete." };
   }
 
-  const imageFileNames =
-    categoriesData
-      ?.map((category) => category.image_url)
-      .filter(Boolean)
-      .map((url) => `categories/${url.split("/").pop()}`) ?? [];
+  const urls = (categoriesData as { image_url?: string }[] | null)
+    ?.map((category: { image_url?: string }) => category.image_url)
+    .filter((u): u is string => Boolean(u)) ?? [];
+  const imageFileNames = urls.map((url) => `categories/${url.split("/").pop()}`);
 
   if (imageFileNames.length > 0) {
     const { error: storageError } = await supabase.storage

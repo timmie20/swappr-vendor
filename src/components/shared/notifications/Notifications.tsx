@@ -1,50 +1,7 @@
-import { Bell } from "lucide-react";
+"use client";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import NotificationsBadge from "./NotificationsBadge";
-import NotificationContent from "./NotificationContent";
-import { getUser } from "@/helpers/getUser";
+/** Mock notifications component (replace with real implementation when backend is ready) */
 
-export default async function Notifications() {
-  // TODO: Replace with actual auth check when backend is ready
-  // For now, using mock user for development
-  const user = await getUser();
-  const staffId = user?.id || "mock-vendor-id";
-
-  // TODO: Re-enable auth redirect once backend authentication is implemented
-  // if (!staffId) {
-  //   redirect("/login");
-  // }
-
-  return (
-    <div className="relative">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Bell />
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
-        </PopoverTrigger>
-
-        <PopoverContent
-          align="end"
-          alignOffset={-60}
-          asChild
-          className="flex flex-col p-0 w-[18rem] sm:w-[22rem]"
-        >
-          <ScrollArea type="auto" className="h-full max-h-[22rem]">
-            <NotificationContent staffId={staffId} />
-          </ScrollArea>
-        </PopoverContent>
-      </Popover>
-
-      <NotificationsBadge staffId={staffId} />
-    </div>
-  );
+export default function Notifications() {
+  return null;
 }

@@ -271,3 +271,21 @@ input[type="number"]::-webkit-outer-spin-button {
     @apply bg-background text-foreground font-switzer;
   }
 }
+
+/* Ensure Sonner toast text is always visible */
+[data-sonner-toast] {
+  color: var(--color-popover-foreground);
+}
+[data-sonner-toast] [data-title],
+[data-sonner-toast] [data-description] {
+  color: inherit;
+}
+[data-sonner-toast][data-type="error"] {
+  color: var(--color-destructive-foreground);
+}
+[data-sonner-toast][data-type="success"] {
+  color: var(--color-primary-foreground);
+}
+[data-sonner-toast][data-type="info"] {
+  color: var(--color-popover-foreground);
+}

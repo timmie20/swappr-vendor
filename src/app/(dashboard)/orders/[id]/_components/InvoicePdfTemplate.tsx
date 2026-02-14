@@ -113,14 +113,14 @@ export default function InvoicePdfTemplate({ order }: { order: OrderDetails }) {
           </Typography>
 
           <div className="flex flex-col text-sm gap-y-0.5">
-            <Typography component="p">{order.customers.name}</Typography>
+            <Typography component="p">{order.customers?.name}</Typography>
             <Typography component="p" className="break-words">
-              {order.customers.email}
+              {order.customers?.email}
             </Typography>
-            {order.customers.phone && (
+            {order.customers?.phone && (
               <Typography component="p">{order.customers.phone}</Typography>
             )}
-            {order.customers.address && (
+            {order.customers?.address && (
               <Typography component="p" className="max-w-80">
                 {order.customers.address}
               </Typography>
@@ -152,7 +152,7 @@ export default function InvoicePdfTemplate({ order }: { order: OrderDetails }) {
           </TableHeader>
 
           <TableBody>
-            {order.order_items.map((orderItem, index) => (
+            {(order.order_items ?? []).map((orderItem: import("@/services/orders/types").OrderItemDetail, index: number) => (
               <TableRow
                 key={`order-item-${index}`}
                 className="hover:bg-transparent border-b-print-border"
@@ -161,7 +161,7 @@ export default function InvoicePdfTemplate({ order }: { order: OrderDetails }) {
                   {index + 1}
                 </TableCell>
                 <TableCell className="py-3 px-6 font-normal text-black">
-                  {orderItem.products.name}
+                  {orderItem.products?.name}
                 </TableCell>
                 <TableCell className="py-3 text-center font-normal text-black">
                   {orderItem.quantity}
@@ -201,7 +201,7 @@ export default function InvoicePdfTemplate({ order }: { order: OrderDetails }) {
           </Typography>
 
           <Typography className="text-base capitalize font-semibold tracking-wide text-black">
-            ${order.shipping_cost.toFixed(2)}
+            ${(order.shipping_cost ?? 0).toFixed(2)}
           </Typography>
         </div>
 
@@ -219,9 +219,9 @@ export default function InvoicePdfTemplate({ order }: { order: OrderDetails }) {
               ? order.coupons.discount_type === "fixed"
                 ? order.coupons.discount_value.toFixed(2)
                 : (
-                    ((order.total_amount - order.shipping_cost) * 100) /
+                    ((order.total_amount - (order.shipping_cost ?? 0)) * 100) /
                       (100 - order.coupons.discount_value) -
-                    (order.total_amount - order.shipping_cost)
+                    (order.total_amount - (order.shipping_cost ?? 0))
                   ).toFixed(2)
               : "0.00"}
           </Typography>

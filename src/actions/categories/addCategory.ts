@@ -67,7 +67,7 @@ export async function addCategory(
 
   if (dbError) {
     if (dbError.code === "23505") {
-      const match = dbError.details.match(/\(([^)]+)\)/);
+      const match = (dbError.details ?? "").match(/\(([^)]+)\)/);
       const uniqueColumn = match ? match[1] : null;
 
       if (uniqueColumn === "slug") {

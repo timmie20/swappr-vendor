@@ -9,8 +9,51 @@ import TableSkeleton from "@/components/shared/table/TableSkeleton";
 import TableError from "@/components/shared/table/TableError";
 
 import { getSearchParams } from "@/helpers/getSearchParams";
-import { fetchOrders } from "@/services/orders";
+
 import { useAuthorization } from "@/hooks/use-authorization";
+import { Pagination } from "@/types/pagination";
+
+type FetchOrdersParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+  method?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+type MockOrder = {
+  id: string;
+  invoice_no: string;
+  order_time: string;
+  customers?: { name: string };
+  payment_method: string;
+  total_amount: number;
+  status: string;
+};
+
+function fetchOrders(_params: FetchOrdersParams): Promise<{
+  data: MockOrder[];
+  pagination: Pagination;
+}> {
+  const page = _params.page ?? 1;
+  const limit = _params.limit ?? 10;
+  const totalItems = 0;
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+
+  return Promise.resolve({
+    data: [],
+    pagination: {
+      limit,
+      current: page,
+      items: totalItems,
+      pages: totalPages,
+      next: page < totalPages ? page + 1 : null,
+      prev: page > 1 ? page - 1 : null,
+    },
+  });
+}
 
 export default function RecentOrders() {
   const { hasPermission } = useAuthorization();

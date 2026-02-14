@@ -9,20 +9,13 @@ export const metadata: Metadata = {
 };
 
 export default async function EditProfilePage() {
-  // TODO: Replace with actual auth check when backend is ready
-  // For now, return null to avoid errors during development
-  const profile = await fetchStaffDetails();
-
-  // TODO: Re-enable redirect once backend authentication is implemented
-  // if (!profile) {
-  //   redirect("/login");
-  // }
+  const { staff } = await fetchStaffDetails();
 
   return (
     <section>
       <PageTitle>Edit Profile</PageTitle>
 
-      <EditProfileForm profile={profile} />
+      <EditProfileForm profile={staff ?? ({} as import("@/services/staff/types").Staff)} />
     </section>
   );
 }

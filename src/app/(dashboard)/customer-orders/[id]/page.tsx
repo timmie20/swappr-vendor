@@ -27,7 +27,7 @@ export async function generateMetadata({
       return { title: "No customer orders" };
     }
 
-    return { title: customerOrders[0].customers.name };
+    return { title: customerOrders[0].customers?.name ?? "Customer orders" };
   } catch (e) {
     return { title: "Customer not found" };
   }
@@ -35,21 +35,20 @@ export async function generateMetadata({
 
 export default async function CustomerOrders({ params: { id } }: PageParams) {
   try {
-    const { customerOrders } = await fetchCustomerOrders({
-      id,
-    });
+    const { customerOrders } = await fetchCustomerOrders({ id });
+    const orders = Array.isArray(customerOrders) ? customerOrders : [];
 
     return (
       <section>
         <PageTitle>Customer Order List</PageTitle>
 
-        {customerOrders.length === 0 ? (
+        {orders.length === 0 ? (
           <Card className="w-full flex flex-col text-center items-center py-8">
             <IoBagHandle className="text-red-500 size-20 mb-4" />
             <Typography>This customer has no order yet!</Typography>
           </Card>
         ) : (
-          <CustomerOrdersTable data={customerOrders} />
+          <CustomerOrdersTable data={orders} />
         )}
       </section>
     );

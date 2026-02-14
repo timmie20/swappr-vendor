@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerActionClient } from "@/lib/supabase/server-action";
-import { OrdersExport } from "@/services/orders/types";
+import { OrdersExport, OrderRowExport } from "@/services/orders/types";
 import { getDiscount } from "@/helpers/getDiscount";
 
 export async function exportOrders() {
@@ -20,8 +20,9 @@ export async function exportOrders() {
     return { error: `Failed to fetch data for orders.` };
   }
 
+  const rows = (data ?? []) as OrderRowExport[];
   return {
-    data: data.map(
+    data: rows.map(
       (order): OrdersExport => ({
         id: order.id,
         invoice_no: order.invoice_no,
@@ -29,9 +30,9 @@ export async function exportOrders() {
         customer_email: order.customers?.email ?? "",
         total_amount: order.total_amount,
         discount: getDiscount({
-          coupon: order.coupons,
+          coupon: order.coupons ?? null,
           totalAmount: order.total_amount,
-          shippingCost: order.shipping_cost,
+          shippingCost: order.shipping_cost ?? 0,
         }),
         shipping_cost: order.shipping_cost,
         payment_method: order.payment_method,

@@ -1,19 +1,47 @@
-// TODO: Supabase server action client removed - using backend API instead
-// This file is kept for reference but should not be used
+/**
+ * Mock Supabase server client for server actions.
+ * Replace with real createServerActionClient when Supabase is configured.
+ */
 
-/*
-import { createServerActionClient as createClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/types/supabase";
-import { cookies } from "next/headers";
+type MockResult = { data: unknown; error: { code?: string; message?: string; details?: string } | null };
 
-export const createServerActionClient = () => {
-  return createClient<Database>({ cookies });
+type MockQueryBuilder = {
+  select: (_?: string) => MockQueryBuilder & PromiseLike<MockResult>;
+  insert: (_: Record<string, unknown>) => MockQueryBuilder;
+  update: (_: Record<string, unknown>) => MockQueryBuilder;
+  delete: () => MockQueryBuilder & PromiseLike<MockResult>;
+  eq: (_: string, __: string) => MockQueryBuilder;
+  in: (_: string, __: unknown[]) => MockQueryBuilder;
+  single: () => Promise<MockResult>;
+  then<T>(onFulfilled: (value: MockResult) => T | PromiseLike<T>): Promise<T>;
 };
-*/
 
-// Placeholder - this function should not be called anymore
-export const createServerActionClient = () => {
-  throw new Error(
-    "Supabase server action client deprecated - use API client from @/lib/api-client instead",
-  );
-};
+function createMockQueryBuilder(): MockQueryBuilder {
+  const result: MockResult = { data: [], error: null };
+  const thenImpl = <T>(fn: (value: MockResult) => T | PromiseLike<T>) => Promise.resolve(fn(result)) as Promise<T>;
+  const chain: MockQueryBuilder = {
+    select: () => ({ ...chain, then: thenImpl }),
+    insert: () => chain,
+    update: () => chain,
+    delete: () => ({ ...chain, then: <T>(fn: (value: MockResult) => T | PromiseLike<T>) => Promise.resolve(fn({ data: null, error: null })) as Promise<T> }),
+    eq: () => chain,
+    in: () => chain,
+    single: () => Promise.resolve({ data: null, error: null }),
+    then: thenImpl,
+  };
+  return chain;
+}
+
+export function createServerActionClient() {
+  return {
+    from: (_table: string) => createMockQueryBuilder(),
+    storage: {
+      from: (_bucket: string) => ({
+        upload: (_path: string, _file: File) =>
+          Promise.resolve({ data: { path: "" }, error: null }),
+        getPublicUrl: (path: string) => ({ data: { publicUrl: path } }),
+        remove: (_paths: string[]) => Promise.resolve({ error: null }),
+      }),
+    },
+  };
+}

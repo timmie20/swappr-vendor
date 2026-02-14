@@ -1,30 +1,25 @@
-/**
- * Coupons Service
- *
- * TODO: Replace with actual backend API calls
- * Currently using placeholder functions from api-client
- */
+/** Mock coupons service */
 
-import { fetchCoupons as fetchCouponsAPI } from "@/lib/api-client";
-import { Coupon, FetchCouponsParams, FetchCouponsResponse } from "./types";
+import type { Coupon } from "./types";
+import { Pagination } from "@/types/pagination";
 
-export async function fetchCoupons(
-  params: FetchCouponsParams,
-): Promise<FetchCouponsResponse> {
-  // TODO: Replace with actual API call
-  // const response = await fetchCouponsAPI(params);
-
-  console.warn(
-    "fetchCoupons: Using placeholder - replace with actual API call",
-  );
-
+export async function fetchCoupons(_params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+}): Promise<{ data: Coupon[]; pagination: Pagination }> {
+  const limit = _params?.limit ?? 10;
+  const page = _params?.page ?? 1;
   return {
     data: [],
     pagination: {
-      page: params.page || 1,
-      limit: params.limit || 10,
-      totalPages: 0,
-      totalItems: 0,
+      limit,
+      current: page,
+      items: 0,
+      pages: 1,
+      next: null,
+      prev: null,
     },
   };
 }

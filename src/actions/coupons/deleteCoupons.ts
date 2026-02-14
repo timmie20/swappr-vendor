@@ -20,11 +20,10 @@ export async function deleteCoupons(
     return { dbError: "Could not find the coupons to delete." };
   }
 
-  const imageFileNames =
-    couponsData
-      ?.map((coupon) => coupon.image_url)
-      .filter(Boolean)
-      .map((url) => `coupons/${url.split("/").pop()}`) ?? [];
+  const urls = (couponsData as { image_url?: string }[] | null)
+    ?.map((coupon: { image_url?: string }) => coupon.image_url)
+    .filter((u): u is string => Boolean(u)) ?? [];
+  const imageFileNames = urls.map((url) => `coupons/${url.split("/").pop()}`);
 
   if (imageFileNames.length > 0) {
     const { error: storageError } = await supabase.storage

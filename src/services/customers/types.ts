@@ -1,30 +1,15 @@
-import { Database } from "@/types/supabase";
-import { Pagination } from "@/types/pagination";
-import { SBOrder } from "../orders/types";
+/** Mock customer types */
 
-export type SBCustomer = Database["public"]["Tables"]["customers"]["Row"];
+import type { OrderStatus } from "@/services/orders/types";
 
-export type Customer = SBCustomer;
-
-export interface FetchCustomersParams {
-  page?: number;
-  limit?: number;
-  search?: string;
+export interface CustomerOrder {
+  id: string;
+  invoice_no: string;
+  order_time: string;
+  payment_method: string;
+  total_amount: number;
+  status: OrderStatus;
+  address?: string;
+  customers?: { name?: string; email?: string; address?: string };
+  [key: string]: unknown;
 }
-
-export interface FetchCustomersResponse {
-  data: Customer[];
-  pagination: Pagination;
-}
-
-export type CustomerOrder = Pick<
-  SBOrder,
-  | "id"
-  | "invoice_no"
-  | "order_time"
-  | "payment_method"
-  | "total_amount"
-  | "status"
-> & {
-  customers: Pick<SBCustomer, "name" | "address" | "phone">;
-};

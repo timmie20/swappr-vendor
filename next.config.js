@@ -24,6 +24,14 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/proxy/:path*",
+        destination: "https://stag.swappr.com.ng/:path*",
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

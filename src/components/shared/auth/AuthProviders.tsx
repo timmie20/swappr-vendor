@@ -25,14 +25,6 @@ export default function AuthProviders({ authType = "Login" }: Props) {
 
   return (
     <div className="mb-10 space-y-4">
-      <Button
-        // onClick={() => handleAuth("github")}
-        variant="secondary"
-        className="min-h-14 w-full"
-      >
-        <FaGithub className="mr-3 size-4" />
-        {authType} With Github
-      </Button>
 
       <Button
         // onClick={() => handleAuth("google")}

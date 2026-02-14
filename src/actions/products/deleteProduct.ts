@@ -21,7 +21,7 @@ export async function deleteProduct(
     return { dbError: "Could not find the product to delete." };
   }
 
-  const imageUrl = productData?.image_url;
+  const imageUrl = (productData as { image_url?: string } | null)?.image_url;
 
   if (imageUrl) {
     const imageFileName = `products/${imageUrl.split("/").pop()}`;

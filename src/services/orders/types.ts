@@ -1,68 +1,65 @@
-import { Database } from "@/types/supabase";
-import { Pagination } from "@/types/pagination";
+/** Mock order types (replace with real types when backend is ready) */
 
-import { SBCustomer } from "../customers/types";
-import { SBProduct } from "../products/types";
-import { SBCoupon } from "../coupons/types";
+export type OrderStatus = "pending" | "processing" | "delivered" | "cancelled";
 
-export type OrderStatus = Database["public"]["Enums"]["order_status_enum"];
-export type OrderMethod = Database["public"]["Enums"]["payment_method_enum"];
-
-export type SBOrder = Database["public"]["Tables"]["orders"]["Row"];
-type SBOrderItems = Database["public"]["Tables"]["order_items"]["Row"];
-
-export type Order = SBOrder & {
-  customers: Pick<SBCustomer, "name"> | null;
-};
-
-export interface FetchOrdersParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: string;
-  method?: string;
-  startDate?: string;
-  endDate?: string;
+export interface OrderCustomer {
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
 }
 
-export interface FetchOrdersResponse {
-  data: Order[];
-  pagination: Pagination;
+export interface Order {
+  id: string;
+  invoice_no: string;
+  order_time: string;
+  customers?: OrderCustomer;
+  payment_method: string;
+  total_amount: number;
+  shipping_cost?: number;
+  status: OrderStatus;
+  coupons?: { discount_type: string; discount_value: number } | null;
 }
 
-export type OrderDetails = Pick<
-  SBOrder,
-  | "id"
-  | "invoice_no"
-  | "order_time"
-  | "total_amount"
-  | "shipping_cost"
-  | "payment_method"
-  | "status"
-> & {
-  customers: Pick<SBCustomer, "name" | "email" | "phone" | "address">;
-} & {
-  order_items: (Pick<SBOrderItems, "quantity" | "unit_price"> & {
-    products: Pick<SBProduct, "name">;
-  })[];
-} & {
-  coupons: Pick<SBCoupon, "discount_type" | "discount_value"> | null;
-};
+export interface OrderItemDetail {
+  id: string;
+  quantity: number;
+  unit_price: number;
+  products?: { name: string; price?: number };
+}
 
-export type OrdersExport = Pick<
-  SBOrder,
-  | "id"
-  | "invoice_no"
-  | "order_time"
-  | "total_amount"
-  | "shipping_cost"
-  | "payment_method"
-  | "order_time"
-  | "status"
-  | "created_at"
-  | "updated_at"
-> & {
+export interface OrderDetails extends Order {
+  order_items?: OrderItemDetail[];
+  coupons?: { discount_type: string; discount_value: number } | null;
+}
+
+export interface OrdersExport {
+  id: string;
+  invoice_no: string;
+  customer_name: string;
+  customer_email: string;
+  total_amount: number;
   discount: string;
-  customer_name: SBCustomer["name"];
-  customer_email: SBCustomer["email"];
-};
+  shipping_cost?: number;
+  payment_method: string;
+  order_time: string;
+  status: string;
+  created_at?: unknown;
+  updated_at?: unknown;
+}
+
+export interface OrderRowExport {
+  id: string;
+  invoice_no: string;
+  total_amount: number;
+  shipping_cost?: number;
+  payment_method: string;
+  order_time: string;
+  status: string;
+  created_at?: unknown;
+  updated_at?: unknown;
+  coupons?: { discount_type: "fixed" | "percentage"; discount_value: number } | null;
+  customers?: { name?: string; email?: string } | null;
+}
+
+export type SBOrder = Pick<Order, "total_amount" | "shipping_cost">;

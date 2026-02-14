@@ -1,28 +1,14 @@
-import { Database } from "@/types/supabase";
-import { Pagination } from "@/types/pagination";
+/** Mock staff types */
 
 export type StaffStatus = "active" | "inactive";
 
-export type SBStaff = Database["public"]["Tables"]["staff"]["Row"];
-type SBStaffRole = Database["public"]["Tables"]["staff_roles"]["Row"];
-
-export type Staff = SBStaff & {
-  staff_roles: {
-    name: string | null;
-    display_name: string | null;
-  } | null;
-};
-
-export interface FetchStaffParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  role?: string;
+export interface Staff {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: StaffStatus;
+  [key: string]: unknown;
 }
 
-export interface FetchStaffResponse {
-  data: Staff[];
-  pagination: Pagination;
-}
-
-export type StaffRolesDropdown = Pick<SBStaffRole, "name" | "display_name">;
+export type SBStaff = Staff;

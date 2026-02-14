@@ -1,58 +1,42 @@
-/**
- * Staff Service
- *
- * TODO: Replace with actual backend API calls
- * Currently using placeholder functions from api-client
- */
+/** Mock staff service */
 
-import {
-  fetchStaff as fetchStaffAPI,
-  getVendorProfile,
-} from "@/lib/api-client";
-import {
-  Staff,
-  StaffRolesDropdown,
-  FetchStaffParams,
-  FetchStaffResponse,
-  SBStaff,
-} from "./types";
+import type { Staff } from "./types";
+import { Pagination } from "@/types/pagination";
 
-export async function fetchStaff(
-  params: FetchStaffParams,
-): Promise<FetchStaffResponse> {
-  // TODO: Replace with actual API call
-  // const response = await fetchStaffAPI(params);
-
-  console.warn("fetchStaff: Using placeholder - replace with actual API call");
-
+export async function fetchStaff(_params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+}): Promise<{ data: Staff[]; pagination: Pagination }> {
+  const limit = _params?.limit ?? 10;
+  const page = _params?.page ?? 1;
   return {
     data: [],
     pagination: {
-      page: params.page || 1,
-      limit: params.limit || 10,
-      totalPages: 0,
-      totalItems: 0,
+      limit,
+      current: page,
+      items: 0,
+      pages: 1,
+      next: null,
+      prev: null,
     },
   };
 }
 
-export async function fetchStaffRolesDropdown(): Promise<StaffRolesDropdown[]> {
-  // TODO: Replace with actual API call
-
-  console.warn(
-    "fetchStaffRolesDropdown: Using placeholder - replace with actual API call",
-  );
-
-  return [];
+export async function getCurrentStaff(): Promise<Staff | null> {
+  return null;
 }
 
-export async function fetchStaffDetails(): Promise<SBStaff | null> {
-  // TODO: Replace with actual API call
-  // const response = await getVendorProfile();
+export async function fetchStaffDetails(_id?: string): Promise<{ staff: Staff | null }> {
+  return { staff: null };
+}
 
-  console.warn(
-    "fetchStaffDetails: Using placeholder - replace with actual API call",
-  );
+export interface StaffRole {
+  name: string;
+  display_name: string;
+}
 
-  return null;
+export async function fetchStaffRolesDropdown(): Promise<StaffRole[]> {
+  return [];
 }

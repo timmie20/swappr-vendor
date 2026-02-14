@@ -4,7 +4,7 @@ import { SBOrder } from "@/services/orders/types";
 type Props = {
   coupon: Pick<SBCoupon, "discount_type" | "discount_value"> | null;
   totalAmount: SBOrder["total_amount"];
-  shippingCost: SBOrder["shipping_cost"];
+  shippingCost: number;
 };
 
 export function getDiscount({ coupon, totalAmount, shippingCost }: Props) {

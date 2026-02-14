@@ -1,20 +1,22 @@
-import { type PostgrestFilterBuilder } from "@supabase/postgrest-js";
-
 import { Database } from "@/types/supabase";
 import { Pagination } from "@/types/pagination";
 
 type PublicSchema = Database["public"];
 type PublicTables = PublicSchema["Tables"];
 
+type QueryLike<T> = {
+  range: (from: number, to: number) => PromiseLike<{
+    data: T[] | null;
+    error: { message: string } | null;
+    count?: number | null;
+  }>;
+};
+
 type Props<TableData, TableName extends keyof PublicTables> = {
   page: number;
   limit: number;
   name: keyof PublicTables;
-  query: PostgrestFilterBuilder<
-    PublicSchema,
-    PublicTables[TableName]["Row"],
-    TableData[]
-  >;
+  query: QueryLike<TableData>;
 };
 
 type Response<TableData> = {
@@ -38,8 +40,8 @@ export async function queryPaginatedTable<
   const { data, error, count } = await limitQuery;
 
   if (error) {
-    console.error(`Error fetching ${name}:`, error.message);
-    throw new Error(`Error fetching from table '${name}': ${error.message}`);
+    console.error(`Error fetching ${String(name)}:`, error.message);
+    throw new Error(`Error fetching from table '${String(name)}': ${error.message}`);
   }
 
   const totalItems = count ?? 0;
@@ -49,7 +51,7 @@ export async function queryPaginatedTable<
   const prevPage = currentPage > 1 ? currentPage - 1 : null;
 
   return {
-    data: data,
+    data: data ?? [],
     pagination: {
       limit,
       current: currentPage,

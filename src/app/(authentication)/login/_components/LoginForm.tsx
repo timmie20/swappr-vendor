@@ -1,14 +1,12 @@
 "use client";
 
 import axios from "axios";
-import { useEffect } from "react";
 import { toast } from "sonner";
-import { redirect, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import {
   Form,
   FormControl,
@@ -17,57 +15,74 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import Typography from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import Typography from "@/components/ui/typography";
 import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
-
 import { loginFields } from "./fields";
 import { loginFormSchema } from "./schema";
-import AuthProviders from "@/components/shared/auth/AuthProviders";
+import axiosInstance from "@/helpers/axiosInstance";
+import type { VendorServerActionResponse } from "@/types/server-action";
+import { setCookie } from "@/lib/actions/auth";
 
 type FormData = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
   const form = useForm<FormData>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "test@admin.com",
-      password: "test12345",
+      email: "vendor@swappr.com.ng",
+      password: "vendor123",
     },
   });
 
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (formData: FormData) => {
-      await axios.post("/auth/sign-in", formData);
-    },
-    onSuccess: () => {
-      toast.success("Login Success!", {
-        description: searchParams.get("redirect_to")
-          ? "Redirecting to your page..."
-          : "Redirecting to the dashboard...",
-        position: "top-center",
+      const res = await axiosInstance.post("/auth/login", formData, {
+        withCredentials: false,
       });
+      if (!res.data) throw new Error("No data returned");
+      return res.data as VendorServerActionResponse;
+    },
+    onMutate: () => {
+      toast.loading("Logging in...", { id: "login" });
+    },
+    onSuccess: async (data) => {
+      toast.dismiss("login");
 
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      try {
+        const res = await setCookie(data);
+        if (!res) {
+          form.setError("email", { message: "" });
+          form.setError("password", { message: "You're not a vendor" });
+          return;
+        }
+
+        toast.success("Welcome back!", { id: "login" , description : "Redirecting....."});
+        const redirectTo = searchParams.get("redirect_to") ?? "/";
+        router.push(redirectTo);
+        form.reset();
+        queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      } catch (err) {
+        form.setError("email", { message: "" });
+        form.setError("password", {
+          message: "Failed to save session, please try again",
+        });
+      }
     },
     onError: (error) => {
+      toast.dismiss("login");
       if (axios.isAxiosError(error)) {
-        const { errors } = error.response?.data;
-
-        for (const key in errors) {
-          if (errors[key]) {
-            form.setError(key as keyof FormData, {
-              message: errors[key],
-            });
-          }
-        }
+        form.setError("email", { message: "" });
+        form.setError("password", {
+          message: error.response?.data.message ?? "Login failed",
+        });
       } else {
-        console.error(error);
+        form.setError("email", { message: "" });
+        form.setError("password", { message: "Unexpected error occurred" });
       }
     },
   });
@@ -75,14 +90,6 @@ export default function LoginForm() {
   const onSubmit = (formData: FormData) => {
     mutate(formData);
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      const redirectTo = searchParams.get("redirect_to");
-
-      return redirect(redirectTo || "/");
-    }
-  }, [isSuccess, searchParams]);
 
   return (
     <div className="w-full">
@@ -114,22 +121,18 @@ export default function LoginForm() {
             />
           ))}
 
-          <FormSubmitButton isPending={isPending} className="w-full">
+          <FormSubmitButton
+            isPending={isPending}
+            className="w-full cursor-pointer"
+          >
             Login
           </FormSubmitButton>
         </form>
       </Form>
 
-      <Separator className="my-12" />
-
-      <AuthProviders />
-
-      <div className="flex flex-wrap justify-between gap-4 w-full">
-        <Typography variant="a" href="/forgot-password" className="md:!text-sm">
+      <div className="flex w-full flex-wrap justify-between gap-4">
+        <Typography variant="a" href="/forgot-password" className="md:text-sm!">
           Forgot password?
-        </Typography>
-        <Typography variant="a" href="/signup" className="md:!text-sm">
-          Create an account
         </Typography>
       </div>
     </div>

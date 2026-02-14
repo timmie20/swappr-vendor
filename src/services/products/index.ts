@@ -1,52 +1,33 @@
-/**
- * Products Service
- *
- * TODO: Replace with actual backend API calls
- * Currently using placeholder functions from api-client
- */
+/** Mock products service */
 
-import {
-  fetchVendorProducts,
-  fetchProductDetails as fetchProductDetailsAPI,
-} from "@/lib/api-client";
-import {
-  Product,
-  FetchProductsParams,
-  FetchProductsResponse,
-  ProductDetails,
-} from "./types";
+import type { Product } from "./types";
+import { Pagination } from "@/types/pagination";
 
-export async function fetchProducts(
-  params: FetchProductsParams,
-): Promise<FetchProductsResponse> {
-  // TODO: Remove client parameter and use API client instead
-  // const response = await fetchVendorProducts(params);
-
-  console.warn(
-    "fetchProducts: Using placeholder - replace with actual API call",
-  );
-
-  // Return mock data structure for now
+export async function fetchProducts(_params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  category?: string;
+}): Promise<{ data: Product[]; pagination: Pagination }> {
+  const limit = _params?.limit ?? 10;
+  const page = _params?.page ?? 1;
   return {
     data: [],
     pagination: {
-      page: params.page || 1,
-      limit: params.limit || 10,
-      totalPages: 0,
-      totalItems: 0,
+      limit,
+      current: page,
+      items: 0,
+      pages: 1,
+      next: null,
+      prev: null,
     },
   };
 }
 
-export async function fetchProductDetails({ slug }: { slug: string }) {
-  // TODO: Replace with actual API call
-  // const response = await fetchProductDetailsAPI(slug);
+export async function fetchProductBySlug(_slug: string): Promise<{ product: Product | null }> {
+  return { product: null };
+}
 
-  console.warn(
-    "fetchProductDetails: Using placeholder - replace with actual API call",
-  );
-
-  return {
-    product: null as ProductDetails | null,
-  };
+export async function fetchProductDetails(_id: string): Promise<{ product: Product | null }> {
+  return { product: null };
 }

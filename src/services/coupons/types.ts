@@ -1,19 +1,14 @@
-import { Database } from "@/types/supabase";
-import { Pagination } from "@/types/pagination";
+/** Mock coupon types */
 
-export type CouponStatus = "expired" | "active";
+export type CouponStatus = "active" | "expired";
 
-export type SBCoupon = Database["public"]["Tables"]["coupons"]["Row"];
-
-export type Coupon = SBCoupon;
-
-export interface FetchCouponsParams {
-  page?: number;
-  limit?: number;
-  search?: string;
+export interface Coupon {
+  id: string;
+  code: string;
+  discount_type: "fixed" | "percentage";
+  discount_value: number;
+  status: CouponStatus;
+  [key: string]: unknown;
 }
 
-export interface FetchCouponsResponse {
-  data: Coupon[];
-  pagination: Pagination;
-}
+export type SBCoupon = Pick<Coupon, "discount_type" | "discount_value">;

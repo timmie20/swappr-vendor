@@ -24,11 +24,12 @@ export async function POST(request: Request) {
 
   try {
     await supabase.auth.exchangeCodeForSession(code);
-  } catch (err: any) {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "An error occurred";
     return NextResponse.json(
       {
         errors: {
-          password: err.message,
+          password: message,
         },
       },
       { status: 401 }
