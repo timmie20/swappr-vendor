@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO: Authentication middleware removed for development
-// All routes are now publicly accessible
-// Will be re-implemented with backend API authentication in future
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+  const token = req.cookies.get("accessToken")?.value;
 
-  // No authentication checks - all routes are public for now
-  return res;
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  return NextResponse.next();
 }
-
+ 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|auth|.*\\..*).*)"],
+  matcher: ["/((?!api|proxy|_next/static|_next/image|favicon.ico|login|.*\\..*).*)"],
 };
