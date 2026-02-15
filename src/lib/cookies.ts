@@ -50,8 +50,7 @@ export async function setCookie(
 ): Promise<boolean> {
   const cookieStore = await cookies();
 
-  cookieStore.delete("accessToken");
-  cookieStore.delete("refreshToken");
+  await clearTokens()
 
   if (role !== UserRole.VENDOR) {
     return false;

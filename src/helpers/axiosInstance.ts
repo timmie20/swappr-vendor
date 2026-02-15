@@ -2,7 +2,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SITE_URL!,
-  withCredentials: true,
+  // withCredentials: true, -- will assign manually
   headers: {
     "Content-Type": "application/json",
   },

@@ -3,11 +3,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/helpers/axiosInstance";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
-import { setCookie } from "@/lib/funcs/cookies";
+import { setCookie } from "@/lib/cookies";
 import type { UseFormReturn } from "react-hook-form";
 import { FormData } from "@/app/(authentication)/login/_components/LoginForm";
 import { VendorAuthData, VendorServerActionResponse } from "@/types/auth-types";
 import {useRouter} from "next/navigation"
+import { loginVendor } from "@/lib/api-client";
 
 export const useLoginMutation = (
   form: UseFormReturn<{ email: string; password: string }>,
@@ -17,10 +18,8 @@ export const useLoginMutation = (
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      const res = await axiosInstance.post("/auth/login", formData, {
-        withCredentials: false,
-      });
-      if (!res.data) throw new Error("No data returned");
+      const res = await loginVendor(formData.email, formData.password)
+      if (!res || !res.data) throw new Error("No data returned");
       return res.data as Extract<
         VendorServerActionResponse,
         { user: VendorAuthData }
