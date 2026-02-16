@@ -32,16 +32,15 @@ export default function LoginForm() {
 
   const signIn = useLogin();
 
-  const onSubmit = (values: FormData) => {
-    signIn.mutate(values, {
-      onSuccess: () => {
-        form.reset();
-        router.push("/");
-      },
-      onError: (error: Error) => {
-        form.setError("password", { message: error.message });
-      },
-    });
+  const onSubmit = async (values: FormData) => {
+    try {
+      await signIn.mutateAsync(values);
+      form.reset();
+      router.push("/");
+    } catch (error) {
+      const err = error as Error;
+      form.setError("password", { message: err.message });
+    }
   };
 
   return (
