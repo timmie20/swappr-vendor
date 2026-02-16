@@ -21,7 +21,7 @@ import Typography from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { signupFields } from "./fields";
 import { signupFormSchema } from "./schema";
@@ -131,7 +131,7 @@ export default function SignupForm() {
                     <Typography
                       variant="a"
                       href="#"
-                      className="md:!text-sm font-medium"
+                      className="font-medium md:!text-sm"
                     >
                       privacy policy
                     </Typography>

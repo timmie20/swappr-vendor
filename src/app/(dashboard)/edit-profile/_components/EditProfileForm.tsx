@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 import {
   FormTextInput,
   FormImageInput,
@@ -94,7 +94,7 @@ export default function EditProfileForm({ profile }: { profile: SBStaff }) {
             />
           </div>
 
-          <div className="flex justify-end mt-10">
+          <div className="mt-10 flex justify-end">
             <FormSubmitButton isPending={isPending}>
               Update Profile
             </FormSubmitButton>

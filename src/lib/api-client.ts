@@ -15,20 +15,11 @@ import axiosInstance from "@/helpers/axiosInstance";
 // ============================================================================
 
 export async function loginVendor(email: string, password: string) {
-  // TODO: Implement actual API call
-  // return axiosInstance.post('/api/vendor/login', { email, password });
-
-  console.warn("loginVendor: Placeholder function called");
-  return {
-    data: {
-      user: {
-        id: "mock-user-id",
-        email: email,
-        name: "Mock Vendor",
-      },
-      token: "mock-jwt-token",
-    },
-  };
+  const data = await axiosInstance.post("/auth/login", {
+    email,
+    password,
+  });
+  return data;
 }
 
 export async function signupVendor(

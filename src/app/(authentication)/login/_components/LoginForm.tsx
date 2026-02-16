@@ -1,88 +1,48 @@
 "use client";
-
-import axios from "axios";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { redirect, useSearchParams } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import Typography from "@/components/ui/typography";
+import { SubmitButton } from "@/components/shared/form/SubmitButton";
+import { useLogin } from "@/hooks/use-auth";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { signInSchema } from "./schema";
+import { useRouter } from "next/navigation";
 
-import { loginFields } from "./fields";
-import { loginFormSchema } from "./schema";
-import AuthProviders from "@/components/shared/auth/AuthProviders";
-
-type FormData = z.infer<typeof loginFormSchema>;
+export type FormData = z.infer<typeof signInSchema>;
 
 export default function LoginForm() {
-  const queryClient = useQueryClient();
-  const searchParams = useSearchParams();
-
   const form = useForm<FormData>({
-    resolver: zodResolver(loginFormSchema),
+    resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "test@admin.com",
-      password: "test12345",
+      email: "",
+      password: "",
     },
+    mode: "onSubmit",
   });
 
-  const { mutate, isPending, isSuccess } = useMutation({
-    mutationFn: async (formData: FormData) => {
-      await axios.post("/auth/sign-in", formData);
-    },
-    onSuccess: () => {
-      toast.success("Login Success!", {
-        description: searchParams.get("redirect_to")
-          ? "Redirecting to your page..."
-          : "Redirecting to the dashboard...",
-        position: "top-center",
-      });
+  const router = useRouter();
 
-      form.reset();
-      queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-    },
-    onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        const { errors } = error.response?.data;
+  const signIn = useLogin();
 
-        for (const key in errors) {
-          if (errors[key]) {
-            form.setError(key as keyof FormData, {
-              message: errors[key],
-            });
-          }
-        }
-      } else {
-        console.error(error);
-      }
-    },
-  });
-
-  const onSubmit = (formData: FormData) => {
-    mutate(formData);
+  const onSubmit = (values: FormData) => {
+    signIn.mutate(values, {
+      onSuccess: () => {
+        form.reset();
+        router.push("/");
+      },
+      onError: (error: Error) => {
+        form.setError("password", { message: error.message });
+      },
+    });
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      const redirectTo = searchParams.get("redirect_to");
-
-      return redirect(redirectTo || "/");
-    }
-  }, [isSuccess, searchParams]);
 
   return (
     <div className="w-full">
@@ -90,48 +50,70 @@ export default function LoginForm() {
         Login
       </Typography>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {loginFields.map((formField) => (
-            <FormField
-              key={`form-field-${formField.name}`}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FieldSet className="w-full">
+          <FieldGroup>
+            <Controller
+              name="email"
               control={form.control}
-              name={formField.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{formField.label}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type={formField.inputType}
-                      placeholder={formField.placeholder}
-                      autoComplete={formField.autoComplete}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    required
+                    placeholder="Enter email address"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
             />
-          ))}
 
-          <FormSubmitButton isPending={isPending} className="w-full">
-            Login
-          </FormSubmitButton>
-        </form>
-      </Form>
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    required
+                    type={field.name}
+                    placeholder="Enter password"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </FieldSet>
 
+        <SubmitButton isPending={signIn.isPending} className="w-full">
+          Login
+        </SubmitButton>
+      </form>
+
+      {/* 
       <Separator className="my-12" />
 
       <AuthProviders />
 
-      <div className="flex flex-wrap justify-between gap-4 w-full">
+      <div className="flex w-full flex-wrap justify-between gap-4">
         <Typography variant="a" href="/forgot-password" className="md:!text-sm">
           Forgot password?
         </Typography>
         <Typography variant="a" href="/signup" className="md:!text-sm">
           Create an account
         </Typography>
-      </div>
+      </div> */}
     </div>
   );
 }

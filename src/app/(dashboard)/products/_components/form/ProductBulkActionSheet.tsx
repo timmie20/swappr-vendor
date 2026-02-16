@@ -21,7 +21,7 @@ import {
   FormSheetFooter,
 } from "@/components/shared/form/FormSheet";
 import { FormSwitch, FormCategoryInput } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { productBulkFormSchema, ProductBulkFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -65,7 +65,7 @@ export default function ProductBulkActionSheet({
         });
 
         form.setFocus(
-          Object.keys(result.validationErrors)[0] as keyof ProductBulkFormData
+          Object.keys(result.validationErrors)[0] as keyof ProductBulkFormData,
         );
       } else if ("dbError" in result) {
         toast.error(result.dbError);

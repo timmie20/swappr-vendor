@@ -26,7 +26,7 @@ import {
   FormDatetimeInput,
   FormDiscountInput,
 } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { couponFormSchema, CouponFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -101,7 +101,7 @@ export default function CouponFormSheet({
         });
 
         form.setFocus(
-          Object.keys(result.validationErrors)[0] as keyof CouponFormData
+          Object.keys(result.validationErrors)[0] as keyof CouponFormData,
         );
       } else if ("dbError" in result) {
         toast.error(result.dbError);
@@ -109,7 +109,7 @@ export default function CouponFormSheet({
         form.reset();
         toast.success(
           `Coupon "${result.coupon.campaign_name}" ${actionVerb} successfully!`,
-          { position: "top-center" }
+          { position: "top-center" },
         );
         queryClient.invalidateQueries({ queryKey: ["coupons"] });
         setIsSheetOpen(false);

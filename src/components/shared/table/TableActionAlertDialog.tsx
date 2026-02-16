@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { AlertDialogTooltip } from "@/components/shared/table/TableActionTooltip";
-import { FormSubmitButton } from "../form/FormSubmitButton";
+import { FormSubmitButton } from "../form/SubmitButton";
 import { ServerActionResponse } from "@/types/server-action";
 
 type Props = {
@@ -72,7 +72,7 @@ export function TableActionAlertDialog({
             variant="destructive"
             isPending={isPending}
             onClick={handleConfirm}
-            className="py-2 px-4"
+            className="px-4 py-2"
           >
             {actionButtonText}
           </FormSubmitButton>

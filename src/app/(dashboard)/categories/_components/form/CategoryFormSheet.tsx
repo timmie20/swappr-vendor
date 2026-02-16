@@ -26,7 +26,7 @@ import {
   FormSlugInput,
   FormTextarea,
 } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { categoryFormSchema, CategoryFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -97,7 +97,7 @@ export default function CategoryFormSheet({
         });
 
         form.setFocus(
-          Object.keys(result.validationErrors)[0] as keyof CategoryFormData
+          Object.keys(result.validationErrors)[0] as keyof CategoryFormData,
         );
       } else if ("dbError" in result) {
         toast.error(result.dbError);
@@ -105,7 +105,7 @@ export default function CategoryFormSheet({
         form.reset();
         toast.success(
           `Category "${result.category.name}" ${actionVerb} successfully!`,
-          { position: "top-center" }
+          { position: "top-center" },
         );
         queryClient.invalidateQueries({ queryKey: ["categories"] });
         setIsSheetOpen(false);
