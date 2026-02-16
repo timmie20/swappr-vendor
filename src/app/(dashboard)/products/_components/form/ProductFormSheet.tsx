@@ -28,7 +28,7 @@ import {
   FormSlugInput,
   FormTextarea,
 } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { productFormSchema, ProductFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -107,7 +107,7 @@ export default function ProductFormSheet({
         });
 
         form.setFocus(
-          Object.keys(result.validationErrors)[0] as keyof ProductFormData
+          Object.keys(result.validationErrors)[0] as keyof ProductFormData,
         );
       } else if ("dbError" in result) {
         toast.error(result.dbError);
@@ -115,7 +115,7 @@ export default function ProductFormSheet({
         form.reset();
         toast.success(
           `Product "${result.product.name}" ${actionVerb} successfully!`,
-          { position: "top-center" }
+          { position: "top-center" },
         );
         queryClient.invalidateQueries({ queryKey: ["products"] });
         setIsSheetOpen(false);

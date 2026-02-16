@@ -50,8 +50,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <UserProvider>
               <TooltipProvider>{children}</TooltipProvider>
-
-              <Toaster />
+              <Toaster position="top-right" />
             </UserProvider>
           </ThemeProvider>
         </TanstackQueryProvider>

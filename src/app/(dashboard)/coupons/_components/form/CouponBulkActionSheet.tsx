@@ -21,7 +21,7 @@ import {
   FormSheetFooter,
 } from "@/components/shared/form/FormSheet";
 import { FormSwitch } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { couponBulkFormSchema, CouponBulkFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -63,7 +63,7 @@ export default function CouponBulkActionSheet({
         });
 
         form.setFocus(
-          Object.keys(result.validationErrors)[0] as keyof CouponBulkFormData
+          Object.keys(result.validationErrors)[0] as keyof CouponBulkFormData,
         );
       } else if ("dbError" in result) {
         toast.error(result.dbError);

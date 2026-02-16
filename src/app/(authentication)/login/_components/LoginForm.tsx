@@ -1,43 +1,48 @@
-"use client"
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import Typography from "@/components/ui/typography";
+import { SubmitButton } from "@/components/shared/form/SubmitButton";
+import { useLogin } from "@/hooks/use-auth";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
-import { loginFields } from "./fields";
-import { loginFormSchema } from "./schema";
-import { useLoginMutation } from "@/hooks/use-login";
-import { useEffect } from "react";
+import { signInSchema } from "./schema";
+import { useRouter } from "next/navigation";
 
-export type FormData = z.infer<typeof loginFormSchema>;
+export type FormData = z.infer<typeof signInSchema>;
 
 export default function LoginForm() {
-
   const form = useForm<FormData>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {  
-      email: "test@admin.com",
-      password: "***********",
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
     },
+    mode: "onSubmit",
   });
 
-  const {isPending, mutate} = useLoginMutation(form)
+  const router = useRouter();
 
-  const onSubmit = (formData: FormData) => {
-    mutate(formData)
+  const signIn = useLogin();
+
+  const onSubmit = (values: FormData) => {
+    signIn.mutate(values, {
+      onSuccess: () => {
+        form.reset();
+        router.push("/");
+      },
+      onError: (error: Error) => {
+        form.setError("password", { message: error.message });
+      },
+    });
   };
-
-
 
   return (
     <div className="w-full">
@@ -45,41 +50,63 @@ export default function LoginForm() {
         Login
       </Typography>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {loginFields.map((formField) => (
-            <FormField
-              key={`form-field-${formField.name}`}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FieldSet className="w-full">
+          <FieldGroup>
+            <Controller
+              name="email"
               control={form.control}
-              name={formField.name}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{formField.label}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type={formField.inputType}
-                      placeholder={formField.placeholder}
-                      autoComplete={formField.autoComplete}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    required
+                    placeholder="Enter email address"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
             />
-          ))}
 
-          <FormSubmitButton isPending={isPending} className="w-full">
-            Login
-          </FormSubmitButton>
-        </form>
-      </Form>
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    aria-invalid={fieldState.invalid}
+                    required
+                    type={field.name}
+                    placeholder="Enter password"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </FieldSet>
 
-      {/* <Separator className="my-12" /> */}
+        <SubmitButton isPending={signIn.isPending} className="w-full">
+          Login
+        </SubmitButton>
+      </form>
 
-      {/* <AuthProviders /> */}
+      {/* 
+      <Separator className="my-12" />
 
-      {/* <div className="flex flex-wrap justify-between gap-4 w-full">
+      <AuthProviders />
+
+      <div className="flex w-full flex-wrap justify-between gap-4">
         <Typography variant="a" href="/forgot-password" className="md:!text-sm">
           Forgot password?
         </Typography>
