@@ -9,6 +9,8 @@
  */
 
 import axiosInstance from "@/helpers/axiosInstance";
+import { getToken } from "./cookies";
+import { TokenType } from "@/types/auth-types";
 
 // ============================================================================
 // AUTHENTICATION API
@@ -20,6 +22,16 @@ export async function loginVendor(email: string, password: string) {
     password,
   });
   return data;
+}
+
+export async function logoutVendor() {
+  const token = await getToken(TokenType.RT);
+  const data = await axiosInstance.post("/auth/logout", {
+    refresh_token: token!,
+  });
+  console.log(axiosInstance.defaults.baseURL);
+  console.log("Refresh token:", token);
+  return { data: { success: data.status === 201 } };
 }
 
 export async function signupVendor(
@@ -41,14 +53,6 @@ export async function signupVendor(
       token: "mock-jwt-token",
     },
   };
-}
-
-export async function logoutVendor() {
-  // TODO: Implement actual API call
-  // return axiosInstance.post('/api/vendor/logout');
-
-  console.warn("logoutVendor: Placeholder function called");
-  return { data: { success: true } };
 }
 
 export async function getVendorProfile() {

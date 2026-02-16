@@ -1,12 +1,7 @@
 "use server";
-import { UserRole } from "@/types/auth-types";
+import { TokenType, UserRole } from "@/types/auth-types";
 import { cookies } from "next/headers";
 
-enum TokenType {
-  "AT" = "accessToken",
-  "RT" = "refreshToken",
-  "BT" = "all"
-}
 
 /**
  * gets one or both authentication tokens from cookies. use AT for Access Token,
