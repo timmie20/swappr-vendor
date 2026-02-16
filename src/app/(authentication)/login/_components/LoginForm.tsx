@@ -39,7 +39,7 @@ export default function LoginForm() {
       router.push("/");
     } catch (error) {
       const err = error as Error;
-      form.setError("password", { message: err.message });
+      form.setError("password", { message: "Failed to sign in" });
     }
   };
 
