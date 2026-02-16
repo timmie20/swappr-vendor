@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import Typography from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { passwordUpdateFields } from "./fields";
 import { passwordUpdateFormSchema } from "./schema";

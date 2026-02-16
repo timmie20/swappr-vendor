@@ -21,7 +21,7 @@ import {
   FormSheetFooter,
 } from "@/components/shared/form/FormSheet";
 import { FormTextInput } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { customerFormSchema, CustomerFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -91,7 +91,7 @@ export default function CustomerFormSheet({
         form.reset();
         toast.success(
           `Customer "${result.customer.name}" ${actionVerb} successfully!`,
-          { position: "top-center" }
+          { position: "top-center" },
         );
         queryClient.invalidateQueries({ queryKey: ["customers"] });
         setIsSheetOpen(false);

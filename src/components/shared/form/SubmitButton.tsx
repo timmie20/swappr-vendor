@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 interface Props {
   isPending: boolean;
   children: React.ReactNode;
-  className : string | null
+  className: string | null;
 }
 
-export function FormSubmitButton({
+export function SubmitButton({
   isPending,
   className,
   children,

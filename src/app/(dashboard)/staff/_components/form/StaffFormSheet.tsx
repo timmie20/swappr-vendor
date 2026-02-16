@@ -25,7 +25,7 @@ import {
   FormImageInput,
   FormReadonly,
 } from "@/components/shared/form";
-import { FormSubmitButton } from "@/components/shared/form/FormSubmitButton";
+import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { staffFormSchema, StaffFormData } from "./schema";
 import { objectToFormData } from "@/helpers/objectToFormData";
@@ -98,7 +98,7 @@ export default function StaffFormSheet({
         form.reset();
         toast.success(
           `Staff "${result.staff.name}" ${actionVerb} successfully!`,
-          { position: "top-center" }
+          { position: "top-center" },
         );
         queryClient.invalidateQueries({ queryKey: ["staff"] });
         if (user && user.id === result.staff.id) {
