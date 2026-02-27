@@ -21,7 +21,7 @@ import Typography from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormSubmitButton } from "@/components/shared/form/SubmitButton";
+import { SubmitButton } from "@/components/shared/form/SubmitButton";
 
 import { signupFields } from "./fields";
 import { signupFormSchema } from "./schema";
@@ -143,9 +143,9 @@ export default function SignupForm() {
             )}
           />
 
-          <FormSubmitButton isPending={isPending} className="w-full">
+          <SubmitButton isPending={isPending} className="w-full">
             Create account
-          </FormSubmitButton>
+          </SubmitButton>
         </form>
       </Form>
 

@@ -1,28 +1,25 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
-import { createProduct } from "@/lib/api-client";
 import { productFormSchema } from "@/app/(dashboard)/products/_components/form/schema";
 import { formatValidationErrors } from "@/helpers/formatValidationErrors";
 import { ProductServerActionResponse } from "@/types/server-action";
+import { productEndpoint } from "@/endpoints/products";
 
 export async function addProduct(
   formData: FormData,
 ): Promise<ProductServerActionResponse> {
-  // TODO: Remove Supabase client - using API client instead
-
   const parsedData = productFormSchema.safeParse({
-    name: formData.get("name"),
+    model: formData.get("model"),
+    brand_id: formData.get("brand_id"),
+    category_id: formData.get("category_id"),
+    condition: formData.get("condition"),
+    carrier_status: formData.get("carrier_status"),
+    base_price: formData.get("base_price"),
     description: formData.get("description"),
-    image: formData.get("image"),
-    sku: formData.get("sku"),
-    category: formData.get("category"),
-    costPrice: formData.get("costPrice"),
-    salesPrice: formData.get("salesPrice"),
-    stock: formData.get("stock"),
-    minStockThreshold: formData.get("minStockThreshold"),
-    slug: formData.get("slug"),
+    images: formData.getAll("images"),
+    specifications: JSON.parse((formData.get("specifications") as string) || "{}"),
+    variants: JSON.parse((formData.get("variants") as string) || "[]"),
   });
 
   if (!parsedData.success) {
@@ -33,31 +30,27 @@ export async function addProduct(
     };
   }
 
+  console.log(parsedData.data)
   try {
-    // TODO: Replace with actual backend API call
-    // Image upload will be handled by the backend
-    const response = await createProduct(formData);
+    await productEndpoint.add({
+      ...parsedData.data,
+      carrier_status: parsedData.data.carrier_status as any,
+    });
 
     revalidatePath("/products");
-
-    return {
-      success: true,
-      product: response.data.product,
-    };
+    return { success: true };
   } catch (error: any) {
     console.error("Failed to create product:", error);
+    console.error("Validation Payload from Backend:", error.response?.data);
 
-    // Handle validation errors from backend
     if (error.response?.status === 400) {
       return {
-        validationErrors: error.response.data.errors || {},
+        validationErrors: error.response?.data?.errors || {},
       };
     }
 
     return {
-      dbError:
-        error.response?.data?.message ||
-        "Something went wrong. Please try again later.",
+      dbError: "Network error. Please try again later.",
     };
   }
 }

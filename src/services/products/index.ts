@@ -19,21 +19,27 @@ import {
 export async function fetchProducts(
   params: FetchProductsParams,
 ): Promise<FetchProductsResponse> {
-  // TODO: Remove client parameter and use API client instead
-  // const response = await fetchVendorProducts(params);
+  const response = (await fetchVendorProducts(params)) as any;
 
-  console.warn(
-    "fetchProducts: Using placeholder - replace with actual API call",
-  );
+  console.log("Products response:", response);
 
-  // Return mock data structure for now
+  const products = response?.products || response?.data || [];
+
+  // The API returns pagination info at the root level of the response
+  const totalItems = response?.total ?? products.length ?? 0;
+  const limit = response?.limit ?? 10;
+  const currentPage = response?.page ?? 1;
+  const totalPages = Math.ceil(totalItems / limit) || 1;
+
   return {
-    data: [],
+    data: products,
     pagination: {
-      page: params.page || 1,
-      limit: params.limit || 10,
-      totalPages: 0,
-      totalItems: 0,
+      pages: totalPages,
+      limit: limit,
+      items: totalItems,
+      current: currentPage,
+      next: currentPage < totalPages ? currentPage + 1 : null,
+      prev: currentPage > 1 ? currentPage - 1 : null,
     },
   };
 }

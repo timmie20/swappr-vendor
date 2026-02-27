@@ -7,7 +7,6 @@
 
 import { fetchCategories as fetchCategoriesAPI } from "@/lib/api-client";
 import {
-  Category,
   CategoryDropdown,
   FetchCategoriesParams,
   FetchCategoriesResponse,
@@ -16,31 +15,25 @@ import {
 export async function fetchCategories(
   params: FetchCategoriesParams,
 ): Promise<FetchCategoriesResponse> {
-  // TODO: Replace with actual API call
-  // const response = await fetchCategoriesAPI(params);
-
-  console.warn(
-    "fetchCategories: Using placeholder - replace with actual API call",
-  );
+  const response = await fetchCategoriesAPI(params);
+  const categories = response?.categories || [];
+  const pagination = response?.pagination || {};
 
   return {
-    data: [],
+    data: categories,
     pagination: {
-      page: params.page || 1,
-      limit: params.limit || 10,
-      totalPages: 0,
-      totalItems: 0,
+      pages: pagination.totalPages || pagination.pages || 1,
+      limit: pagination.limit || 10,
+      items: pagination.totalItems || pagination.items || categories.length || 0,
+      current: pagination.page || pagination.currentPage || 1,
+      next: null,
+      prev: null,
     },
   };
 }
 
 export async function fetchCategoriesDropdown(): Promise<CategoryDropdown[]> {
-  // TODO: Replace with actual API call
-  // const response = await fetchCategoriesAPI({ limit: 1000 });
+  const response = await fetchCategoriesAPI({ limit: 1000 });
 
-  console.warn(
-    "fetchCategoriesDropdown: Using placeholder - replace with actual API call",
-  );
-
-  return [];
+  return response.categories;
 }

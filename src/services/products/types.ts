@@ -5,13 +5,30 @@ import { SBCategory } from "../categories/types";
 
 export type ProductStatus = "selling" | "out-of-stock";
 
-export type SBProduct = Database["public"]["Tables"]["products"]["Row"];
+export type Product = {
+  id: string;
+  model: string;
+  base_price: string;
+  brand: { id: string; brand_name: string };
+  carrier_status: string;
+  category: { id: string; name: string };
+  condition: string;
+  created_at: string;
+  images: string[];
+  is_active: boolean;
+  is_swappable: boolean;
+  total_stock: number;
+  vendor: {
+    id: string;
+    business_name: string;
+    is_verified: boolean;
+    rating: string;
+  };
 
-export type Product = SBProduct & {
-  categories: {
-    name: string | null;
-    slug: string | null;
-  } | null;
+  description?: string;
+  min_stock_threshold?: number;
+  slug?: string;
+  sku?: string;
 };
 
 export interface FetchProductsParams {
@@ -31,18 +48,15 @@ export interface FetchProductsResponse {
 }
 
 export type ProductDetails = Pick<
-  SBProduct,
+  Product,
   | "id"
-  | "name"
+  | "model"
   | "description"
-  | "cost_price"
-  | "selling_price"
-  | "stock"
+  | "base_price"
+  | "total_stock"
   | "min_stock_threshold"
-  | "category_id"
-  | "image_url"
+  | "category"
+  | "images"
   | "slug"
   | "sku"
-> & {
-  categories: Pick<SBCategory, "name">;
-};
+>;

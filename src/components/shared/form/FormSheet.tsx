@@ -27,7 +27,7 @@ export const FormSheetHeader = ({ children }: FormSheetHeaderProps) => (
   <SheetHeader className="flex-shrink-0 flex-row gap-4 justify-between text-left bg-popover p-6 border-b">
     {children}
 
-    <SheetClose asChild>
+    {/* <SheetClose asChild>
       <Button
         variant="ghost"
         size="icon"
@@ -35,7 +35,7 @@ export const FormSheetHeader = ({ children }: FormSheetHeaderProps) => (
       >
         <X className="size-6" />
       </Button>
-    </SheetClose>
+    </SheetClose> */}
   </SheetHeader>
 );
 
@@ -44,14 +44,14 @@ type FormSheetFooterProps = {
 };
 
 export const FormSheetFooter = ({ children }: FormSheetFooterProps) => (
-  <SheetFooter className="flex-shrink-0 bg-popover border-t sm:flex-row-reverse">
+  <SheetFooter className="shrink-0 bg-popover border-t sm:flex-row-reverse">
     {children}
 
     <SheetClose asChild>
       <Button
         variant="secondary"
         size="lg"
-        className="w-full hidden sm:inline-flex"
+        className="flex-1 hidden sm:inline-flex"
       >
         Cancel
       </Button>

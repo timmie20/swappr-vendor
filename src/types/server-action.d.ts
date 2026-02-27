@@ -25,9 +25,7 @@ export type VServerActionResponse =
 export type ProductServerActionResponse =
   | ValidationErrorsResponse
   | DbErrorResponse
-  | (SuccessResponse & {
-      product: SBProduct;
-    });
+  | SuccessResponse
 
 export type CategoryServerActionResponse =
   | ValidationErrorsResponse

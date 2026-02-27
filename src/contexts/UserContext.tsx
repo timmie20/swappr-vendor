@@ -38,19 +38,18 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     queryKey: ["user-profile"],
     queryFn: async () => {
       try {
-        const response = await getVendorProfile();
-        const profileData = response.data;
-
+        const profileData = await getVendorProfile();
+        const user = profileData.user;
         return {
           user: {
-            id: profileData.id,
-            email: profileData.email,
-            name: profileData.name,
+            id: user.id,
+            email: user.email,
+            name: user.name,
           },
           profile: {
-            name: profileData.name,
-            image_url: profileData.image_url,
-            role: profileData.role as UserRole,
+            name: user.name,
+            image_url: user.image_url,
+            role: user.role as UserRole,
           },
         };
       } catch (error) {

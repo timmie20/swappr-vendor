@@ -55,7 +55,7 @@ export default function LoginForm() {
         <FieldSet className="w-full">
           <FieldGroup>
             <Controller
-              name="email"
+              name="email"  
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
