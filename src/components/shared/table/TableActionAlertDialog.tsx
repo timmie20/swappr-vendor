@@ -12,11 +12,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { AlertDialogTooltip } from "@/components/shared/table/TableActionTooltip";
-import { SubmitButton } from "../form/SubmitButton";
 import { ServerActionResponse } from "@/types/server-action";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Loader, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   title: string;
@@ -75,7 +73,6 @@ export function TableActionAlertDialog({
             disabled={isPending}
             onClick={handleConfirm}
             type="submit"
-            // className={cn("px-4 py-2")}
             size="lg"
             variant="destructive"
           >

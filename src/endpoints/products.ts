@@ -21,4 +21,13 @@ export const productEndpoint = {
     });
     return data;
   },
+  async delete(productID: string) {
+    const token = await getToken(TokenType.AT)
+    const { data } = await axiosInstance.delete(`/products/${productID}/archive`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+    return data;
+  }
 };

@@ -90,7 +90,6 @@ export async function fetchVendorProducts(params?: any) {
     }
   });
 
-
   return res.data;
 }
 
