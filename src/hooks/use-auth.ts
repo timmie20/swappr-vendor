@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { setCookie } from "@/lib/cookies";
 import { AuthSuccess, UserRole } from "@/types/auth-types";
-import { useRouter } from "next/navigation";
 import { LoginCredentials } from "@/types";
 import { authEndpoints } from "@/endpoints/auth";
 

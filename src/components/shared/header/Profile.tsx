@@ -47,7 +47,7 @@ export default function Profile() {
           <DropdownMenuItem asChild>
             <Link
               href="/"
-              className="w-full justify-start py-3.5 pl-3 pr-8 tracking-wide !cursor-pointer"
+              className="w-full justify-start py-3.5 pl-3 pr-8 tracking-wide cursor-pointer!"
             >
               <LayoutGrid className="mr-3 size-5" /> Dashboard
             </Link>
@@ -56,7 +56,7 @@ export default function Profile() {
           <DropdownMenuItem asChild>
             <Link
               href="/edit-profile"
-              className="w-full justify-start py-3.5 pl-3 pr-8 tracking-wide !cursor-pointer"
+              className="w-full justify-start py-3.5 pl-3 pr-8 tracking-wide cursor-pointer!"
             >
               <Settings className="mr-3 size-5" /> Edit Profile
             </Link>
@@ -66,7 +66,7 @@ export default function Profile() {
             <DropdownMenuItem asChild>
               <button
                 type="submit"
-                className="w-full justify-start py-3.5 pl-3 pr-8 tracking-wide !cursor-pointer"
+                className="w-full justify-start py-3.5 pl-3 pr-8 tracking-wide cursor-pointer!"
               >
                 <LogOut className="mr-3 size-5" /> Log Out
               </button>

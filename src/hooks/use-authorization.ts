@@ -22,10 +22,10 @@ const permissions = {
     canEdit: ["super_admin", "admin"],
   },
   products: {
-    canCreate: ["super_admin", "admin"],
-    canDelete: ["super_admin", "admin"],
-    canEdit: ["super_admin", "admin"],
-    canTogglePublished: ["super_admin", "admin"],
+    canCreate: ["super_admin", "admin", "vendor"],
+    canDelete: ["super_admin", "admin", "vendor"],
+    canEdit: ["super_admin", "admin", "vendor"],
+    canTogglePublished: ["super_admin", "admin", "vendor"],
   },
   staff: {
     canDelete: ["super_admin"],
@@ -39,7 +39,6 @@ type Feature = keyof PermissionMap;
 
 export function useAuthorization() {
   const { user, profile, isLoading } = useUser();
-
   const hasPermission = <F extends Feature>(
     feature: F,
     action: keyof PermissionMap[F]

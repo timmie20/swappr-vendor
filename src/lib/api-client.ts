@@ -1,3 +1,5 @@
+
+
 /**
  * API Client for Swappr Vendor Backend
  *
@@ -9,6 +11,8 @@
  */
 
 import axiosInstance from "@/helpers/axiosInstance";
+import { getToken } from "./cookies";
+import { TokenType } from "@/types/auth-types";
 
 // ============================================================================
 // AUTHENTICATION API
@@ -20,6 +24,16 @@ export async function loginVendor(email: string, password: string) {
     password,
   });
   return data;
+}
+
+export async function logoutVendor() {
+  const token = await getToken(TokenType.RT);
+  const data = await axiosInstance.post("/auth/logout", {
+    refresh_token: token!,
+  });
+  console.log(axiosInstance.defaults.baseURL);
+  console.log("Refresh token:", token);
+  return { data: { success: data.status === 201 } };
 }
 
 export async function signupVendor(
@@ -43,28 +57,16 @@ export async function signupVendor(
   };
 }
 
-export async function logoutVendor() {
-  // TODO: Implement actual API call
-  // return axiosInstance.post('/api/vendor/logout');
-
-  console.warn("logoutVendor: Placeholder function called");
-  return { data: { success: true } };
-}
-
 export async function getVendorProfile() {
-  // TODO: Implement actual API call
-  // return axiosInstance.get('/api/vendor/profile');
-
-  console.warn("getVendorProfile: Placeholder function called");
-  return {
-    data: {
-      id: "mock-user-id",
-      email: "vendor@swappr.com",
-      name: "Mock Vendor",
-      role: "vendor",
-      image_url: null,
+  const token = await getToken(TokenType.AT)
+  const { data } = await axiosInstance.get('/auth/me', {
+    headers: {
+      "Authorization": `Bearer ${token}`,
     },
-  };
+  });
+
+  return data
+
 }
 
 export async function updateVendorProfile(data: any) {
@@ -80,21 +82,15 @@ export async function updateVendorProfile(data: any) {
 // ============================================================================
 
 export async function fetchVendorProducts(params?: any) {
-  // TODO: Implement actual API call
-  // return axiosInstance.get('/api/vendor/products', { params });
+  const token = await getToken(TokenType.AT)
+  const res = await axiosInstance.get('/products', {
+    params,
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
 
-  console.warn("fetchVendorProducts: Placeholder function called");
-  return {
-    data: {
-      products: [],
-      pagination: {
-        page: params?.page || 1,
-        limit: params?.limit || 10,
-        totalPages: 0,
-        totalItems: 0,
-      },
-    },
-  };
+  return res.data;
 }
 
 export async function fetchProductDetails(slug: string) {
@@ -310,20 +306,34 @@ export async function fetchCustomerDetails(id: string) {
 
 export async function fetchCategories(params?: any) {
   // TODO: Implement actual API call
-  // return axiosInstance.get('/api/vendor/categories', { params });
+  const token = await getToken(TokenType.AT)
+  const res = await axiosInstance.get('/categories', {
+    params,
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
 
-  console.warn("fetchCategories: Placeholder function called");
-  return {
-    data: {
-      categories: [],
-      pagination: {
-        page: params?.page || 1,
-        limit: params?.limit || 10,
-        totalPages: 0,
-        totalItems: 0,
-      },
-    },
-  };
+  console.log("Categories response:", res);
+
+
+  return res.data;
+}
+
+// ============================================================================
+// BRANDS API
+// ============================================================================
+
+export async function fetchBrands(params?: any) {
+  const token = await getToken(TokenType.AT)
+  const res = await axiosInstance.get('/brands', {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+
+  return res.data;
 }
 
 export async function createCategory(data: any) {

@@ -22,74 +22,103 @@ const fileSchema = z
 
 export const productFormSchema = z
   .object({
-    name: z
+    model: z
       .string()
-      .min(1, { message: "Product name is required" })
-      .max(100, "Product name must be 100 characters or less"),
+      .min(1, { message: "Model name is required" })
+      .max(100, "Model name must be 100 characters or less"),
+    brand_id: z.string().min(1, { message: "Brand is required" }),
+    category_id: z.string().min(1, { message: "Category is required" }),
+    condition: z.string().min(1, { message: "Condition is required" }),
+    carrier_status: z.enum(["unlocked", "locked"], {
+      errorMap: () => ({ message: "Carrier status must be unlocked or locked" }),
+    }),
+    base_price: z.coerce
+      .number({ invalid_type_error: "Base price must be a number" })
+      .positive({ message: "Base price must be greater than zero" })
+      .finite(),
     description: z
       .string()
-      .min(1, { message: "Product description is required" })
-      .max(1000, "Product description must be 1000 characters or less"),
-    image: z.union([fileSchema, z.string().url()]),
-    sku: z
-      .string()
-      .min(1, { message: "SKU is required" })
-      .max(30, "SKU must be 30 characters or less")
-      .regex(/^[A-Z0-9-]+$/, {
-        message: "SKU must be alphanumeric (uppercase) and can contain hyphens",
+      .min(1, { message: "Description is required" })
+      .max(1000, "Description must be 1000 characters or less"),
+    images: z
+      .array(
+        z.union([
+          z.string().url({ message: "Each image must be a valid URL" }),
+          z.literal(""),
+        ])
+      )
+      .min(1, { message: "At least one image is required" })
+      .refine((imgs) => imgs.some((img) => img !== ""), {
+        message: "At least one valid image URL is required",
       }),
-    category: z.string().min(1, { message: "Category is required" }),
-    costPrice: z.coerce
-      .number({
-        invalid_type_error: "Cost price must be a number",
-      })
-      .positive({ message: "Cost price must be greater than zero" })
-      .finite(),
-    salesPrice: z.coerce
-      .number({
-        invalid_type_error: "Sales price must be a number",
-      })
-      .positive({ message: "Sales price must be greater than zero" })
-      .finite(),
-    stock: z.coerce
-      .number({
-        invalid_type_error: "Stock must be a number",
-      })
-      .int({ message: "Stock must be a whole number" })
-      .min(0, { message: "Stock cannot be negative" }),
-    minStockThreshold: z.coerce
-      .number({
-        invalid_type_error: "Min stock must be a number",
-      })
-      .int({ message: "Min stock threshold must be a whole number" })
-      .min(0, { message: "Min stock threshold cannot be negative" }),
-    slug: z
-      .string()
-      .min(1, { message: "Product slug is required" })
-      .max(100, "Product slug must be 100 characters or less")
-      .regex(/^[a-z0-9-]+$/, {
-        message:
-          "Slug must be lowercase, alphanumeric, and use hyphens for spaces",
-      }),
+    specifications: z.object({
+      processor: z.string().min(1, { message: "Processor is required" }),
+      display: z.string().min(1, { message: "Display is required" }),
+      camera: z.string().min(1, { message: "Camera is required" }),
+      battery: z.string().min(1, { message: "Battery is required" }),
+      material: z.string().min(1, { message: "Material is required" }),
+    }),
+    variants: z
+      .array(
+        z.object({
+          color: z.string().min(1, { message: "Color is required" }),
+          storage: z.coerce
+            .number({ invalid_type_error: "Storage must be a number" })
+            .int({ message: "Storage must be a whole number" })
+            .positive({ message: "Storage must be greater than zero" }),
+          price: z.coerce
+            .number({ invalid_type_error: "Price must be a number" })
+            .positive({ message: "Price must be greater than zero" })
+            .finite(),
+          stock_quantity: z.coerce
+            .number({ invalid_type_error: "Stock quantity must be a number" })
+            .int({ message: "Stock quantity must be a whole number" })
+            .min(0, { message: "Stock quantity cannot be negative" }),
+        })
+      )
+      .min(1, { message: "At least one variant is required" })
   })
   .superRefine((data, ctx) => {
-    if (data.salesPrice <= data.costPrice) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Sales price must be greater than cost price",
-        path: ["salesPrice"],
-      });
-    }
-
-    if (data.minStockThreshold > data.stock) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          "Minimum stock threshold cannot be greater than the total stock",
-        path: ["minStockThreshold"],
-      });
-    }
+    data.variants.forEach((variant, index) => {
+      if (variant.price < data.base_price) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Variant price must be greater than or equal to the base price",
+          path: ["variants", index, "price"],
+        });
+      }
+    });
   });
+
+export const updateProductFormSchema = z.object({
+  base_price: z.coerce
+    .number({ invalid_type_error: "Base price must be a number" })
+    .positive({ message: "Base price must be greater than zero" })
+    .finite(),
+  description: z
+    .string()
+    .min(1, { message: "Description is required" })
+    .max(1000, "Description must be 1000 characters or less"),
+  images: z
+    .array(
+      z.union([
+        z.string().url({ message: "Each image must be a valid URL" }),
+        z.literal(""),
+      ])
+    )
+    .min(1, { message: "At least one image is required" })
+    .refine((imgs) => imgs.some((img) => img !== ""), {
+      message: "At least one valid image URL is required",
+    }),
+  specifications: z.object({
+    processor: z.string().min(1, { message: "Processor is required" }),
+    display: z.string().min(1, { message: "Display is required" }),
+    camera: z.string().min(1, { message: "Camera is required" }),
+    battery: z.string().min(1, { message: "Battery is required" }),
+    material: z.string().min(1, { message: "Material is required" }),
+  }),
+});
+
 
 export const productBulkFormSchema = z
   .object({
@@ -106,5 +135,4 @@ export const productBulkFormSchema = z
     }
   });
 
-export type ProductFormData = z.infer<typeof productFormSchema>;
 export type ProductBulkFormData = z.infer<typeof productBulkFormSchema>;

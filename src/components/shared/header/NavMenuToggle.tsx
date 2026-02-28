@@ -10,10 +10,10 @@ export default function NavMenuToggle() {
 
   return (
     <Button
-      variant="ghost"
+      variant="default"
       size="icon"
       onClick={toggleSidebar}
-      className="block md:hidden"
+      className="md:hidden justify-center flex"
     >
       <Menu />
     </Button>

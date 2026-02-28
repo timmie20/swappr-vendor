@@ -71,7 +71,7 @@ export default function AppSidebar() {
         <form action="/auth/sign-out" method="post">
           <Button
             type="submit"
-            className="w-full py-3 text-base whitespace-nowrap"
+            className="w-full py-3 text-base whitespace-nowrap cursor-pointer"
           >
             <LogOut className="mr-3 size-6 shrink-0" />
             Log out

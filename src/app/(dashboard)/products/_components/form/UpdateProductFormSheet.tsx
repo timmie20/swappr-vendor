@@ -30,31 +30,15 @@ import {
   FormTextInput,
   FormTextarea,
   FormPriceInput,
-  FormSelectInput,
-  FormCategoryInput,
-  FormBrandInput
 } from "@/components/shared/form";
 import { SubmitButton } from "@/components/shared/form/SubmitButton";
 
-import { productFormSchema } from "./schema";
-import { objectToFormData } from "@/helpers/objectToFormData";
+import { updateProductFormSchema } from "./schema";
 import { ProductServerActionResponse } from "@/types/server-action";
 
-type ProductFormData = z.infer<typeof productFormSchema>;
+type UpdateProductFormData = z.infer<typeof updateProductFormSchema>;
 
-const defaultVariant = {
-  color: "",
-  storage: 0,
-  price: 0,
-  stock_quantity: 0,
-};
-
-const defaultValues: ProductFormData = {
-  model: "",
-  brand_id: "00000000-0000-0000-0000-000000000000",
-  category_id: "00000000-0000-0000-0000-000000000000",
-  condition: "",
-  carrier_status: "unlocked",
+const defaultValues: UpdateProductFormData = {
   base_price: 0,
   description: "",
   images: [""],
@@ -65,7 +49,6 @@ const defaultValues: ProductFormData = {
     battery: "",
     material: "",
   },
-  variants: [defaultVariant],
 };
 
 type BaseProductFormProps = {
@@ -73,21 +56,12 @@ type BaseProductFormProps = {
   description: string;
   submitButtonText: string;
   actionVerb: string;
-  children: React.ReactNode;
-  action: (formData: FormData) => Promise<ProductServerActionResponse>;
+  initialData: Partial<UpdateProductFormData>;
+  children?: React.ReactNode;
+  action: (payload: any) => Promise<ProductServerActionResponse>;
 };
 
-type AddProductFormProps = BaseProductFormProps & {
-  initialData?: never;
-};
-
-type EditProductFormProps = BaseProductFormProps & {
-  initialData: Partial<ProductFormData>;
-};
-
-type ProductFormProps = AddProductFormProps | EditProductFormProps;
-
-export default function ProductFormSheet({
+export default function UpdateProductFormSheet({
   title,
   description,
   submitButtonText,
@@ -95,14 +69,14 @@ export default function ProductFormSheet({
   initialData,
   children,
   action,
-}: ProductFormProps) {
+}: BaseProductFormProps) {
   const queryClient = useQueryClient();
   const [isPending, startTransition] = useTransition();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [container, setContainer] = useState(null);
 
-  const form = useForm<ProductFormData>({
-    resolver: zodResolver(productFormSchema),
+  const form = useForm<UpdateProductFormData>({
+    resolver: zodResolver(updateProductFormSchema),
     defaultValues: {
       ...defaultValues,
       ...initialData,
@@ -115,38 +89,30 @@ export default function ProductFormSheet({
     remove: removeImage,
   } = useFieldArray({ control: form.control, name: "images" as never });
 
-  const {
-    fields: variantFields,
-    append: appendVariant,
-    remove: removeVariant,
-  } = useFieldArray({ control: form.control, name: "variants" });
-
   useEffect(() => {
     if (initialData) form.reset({ ...defaultValues, ...initialData });
   }, [form, initialData]);
 
-  const onSubmit = (data: ProductFormData) => {
+  const onSubmit = (data: UpdateProductFormData) => {
+    // Send raw JSON instead of FormData as required by the backend
     const payload = {
-      ...data,
-      variants: JSON.stringify(data.variants),
-      specifications: JSON.stringify(data.specifications),
+      base_price: data.base_price,
+      description: data.description,
+      images: data.images.filter((img) => img !== ""),
+      specifications: data.specifications,
     };
 
-    const formData = objectToFormData(payload);
-    formData.delete("images");
-    data.images.forEach((url) => formData.append("images", url));
-
     startTransition(async () => {
-      const result = await action(formData);
+      const result = await action(payload);
 
       if ("validationErrors" in result) {
         Object.keys(result.validationErrors).forEach((key) => {
-          form.setError(key as keyof ProductFormData, {
+          form.setError(key as keyof UpdateProductFormData, {
             message: result.validationErrors![key],
           });
         });
         form.setFocus(
-          Object.keys(result.validationErrors)[0] as keyof ProductFormData,
+          Object.keys(result.validationErrors)[0] as keyof UpdateProductFormData,
         );
       } else if ("dbError" in result) {
         toast.error(result.dbError);
@@ -161,19 +127,15 @@ export default function ProductFormSheet({
     });
   };
 
-  const onInvalid = (errors: FieldErrors<ProductFormData>) => {
-    if (errors.variants?.root) {
-      toast.error(errors.variants.root.message || "Please add at least one variant.");
-    } else if (errors.variants?.message) {
-      toast.error(errors.variants.message || "Please add at least one variant.");
-    } else if (errors.images?.root) {
+  const onInvalid = (errors: FieldErrors<UpdateProductFormData>) => {
+    if (errors.images?.root) {
       toast.error(errors.images.root.message || "Please provide valid images.");
     } else if (errors.images?.message) {
       toast.error(errors.images.message || "Please provide valid images.");
     }
 
     const firstError = Object.keys(errors)[0];
-    if (firstError) form.setFocus(firstError as keyof ProductFormData);
+    if (firstError) form.setFocus(firstError as keyof UpdateProductFormData);
   };
 
   return (
@@ -204,49 +166,6 @@ export default function ProductFormSheet({
                     <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                       Basic Information
                     </h3>
-
-                    <FormTextInput
-                      control={form.control}
-                      name="model"
-                      label="Model"
-                      placeholder="e.g. iPhone 16 Pro"
-                    />
-
-                    <FormBrandInput
-                      control={form.control}
-                      name="brand_id"
-                      label="Brand"
-                    />
-
-                    <FormCategoryInput
-                      control={form.control}
-                      name="category_id"
-                      label="Category"
-                    />
-
-
-                    <FormSelectInput
-                      control={form.control}
-                      name="condition"
-                      label="Condition"
-                      placeholder="Select condition"
-                      options={[
-                        { label: "New", value: "NEW" },
-                        { label: "UK Used", value: "UK_USED" },
-                        { label: "Eco Friendly", value: "ECOFRIENDLY" },
-                      ]}
-                    />
-
-                    <FormSelectInput
-                      control={form.control}
-                      name="carrier_status"
-                      label="Carrier Status"
-                      placeholder="Select carrier status"
-                      options={[
-                        { label: "Unlocked", value: "unlocked" },
-                        { label: "Locked", value: "locked" },
-                      ]}
-                    />
 
                     <FormPriceInput
                       control={form.control}
@@ -328,76 +247,6 @@ export default function ProductFormSheet({
                         label={label}
                         placeholder={placeholder}
                       />
-                    ))}
-                  </section>
-
-                  <Separator />
-
-                  {/* Variants */}
-                  <section className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                        Variants
-                      </h3>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => appendVariant(defaultVariant)}
-                      >
-                        <Plus className="size-4 mr-1" /> Add Variant
-                      </Button>
-                    </div>
-
-                    {variantFields.map((field, index) => (
-                      <Card key={field.id} className="p-4 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium">
-                            Variant {index + 1}
-                          </p>
-                          {variantFields.length > 1 && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => removeVariant(index)}
-                            >
-                              <Trash2 className="size-4" />
-                            </Button>
-                          )}
-                        </div>
-
-                        <FormTextInput
-                          control={form.control}
-                          name={`variants.${index}.color`}
-                          label="Color"
-                          placeholder="Blue Titanium"
-                        />
-
-                        <FormTextInput
-                          control={form.control}
-                          name={`variants.${index}.storage`}
-                          label="Storage (GB)"
-                          placeholder="256"
-                          type="number"
-                        />
-
-                        <FormPriceInput
-                          control={form.control}
-                          name={`variants.${index}.price`}
-                          label="Price"
-                          placeholder="1099.99"
-                        />
-
-                        <FormTextInput
-                          control={form.control}
-                          name={`variants.${index}.stock_quantity`}
-                          label="Stock Quantity"
-                          placeholder="25"
-                          type="number"
-                        />
-                      </Card>
                     ))}
                   </section>
                 </div>

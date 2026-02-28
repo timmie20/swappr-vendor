@@ -24,4 +24,11 @@ type AuthNullError = {
   statusCode: string;
 };
 
+
+export enum TokenType {
+  "AT" = "accessToken",
+  "RT" = "refreshToken",
+  "BT" = "all"
+}
+
 export type VendorServerActionResponse = AuthNullError | AuthSuccess;

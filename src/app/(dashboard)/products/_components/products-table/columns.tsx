@@ -14,7 +14,7 @@ import { TableSwitch } from "@/components/shared/table/TableSwitch";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import { SheetTooltip } from "@/components/shared/table/TableActionTooltip";
 import { TableActionAlertDialog } from "@/components/shared/table/TableActionAlertDialog";
-import ProductFormSheet from "../form/ProductFormSheet";
+import UpdateProductFormSheet from "../form/UpdateProductFormSheet";
 import { ProductBadgeVariants } from "@/constants/badge";
 import { Product } from "@/services/products/types";
 import { SkeletonColumn } from "@/types/skeleton";
@@ -35,15 +35,15 @@ export const getColumns = ({
       cell: ({ row }) => (
         <div className="flex gap-2 items-center">
           <ImagePlaceholder
-            src={row.original.image_url}
-            alt={row.original.name}
+            src={row.original.images?.[0] || ""}
+            alt={row.original.model}
             width={32}
             height={32}
             className="size-8 rounded-full"
           />
 
           <Typography className="capitalize block truncate">
-            {row.original.name}
+            {row.original.model}
           </Typography>
         </div>
       ),
@@ -54,39 +54,39 @@ export const getColumns = ({
         <Typography
           className={cn(
             "block max-w-52 truncate",
-            !row.original.categories?.name && "pl-8"
+            !row.original.category?.name && "pl-8"
           )}
         >
-          {row.original.categories?.name || "—"}
+          {row.original.category?.name || "—"}
         </Typography>
       ),
     },
     {
       header: "price",
       cell: ({ row }) => {
-        return formatAmount(row.original.cost_price);
+        return formatAmount(Number(row.original.base_price));
       },
     },
     {
       header: "sale price",
       cell: ({ row }) => {
-        return formatAmount(row.original.selling_price);
+        return formatAmount(Number(row.original.base_price));
       },
     },
     {
       header: "stock",
-      cell: ({ row }) => row.original.stock,
+      cell: ({ row }) => row.original.total_stock,
     },
     {
       header: "status",
       cell: ({ row }) => {
-        const stock = row.original.stock;
+        const stock = row.original.total_stock;
         const status = stock > 0 ? "selling" : "out-of-stock";
 
         return (
           <Badge
             variant={ProductBadgeVariants[status]}
-            className="flex-shrink-0 text-xs"
+            className="shrink-0 text-xs"
           >
             {status === "selling" ? "Selling" : "Out of stock"}
           </Badge>
@@ -97,7 +97,7 @@ export const getColumns = ({
       header: "view",
       cell: ({ row }) => (
         <Button size="icon" asChild variant="ghost" className="text-foreground">
-          <Link href={`/products/${row.original.slug}`}>
+          <Link href={`/products/${row.original.id}`}>
             <ZoomIn className="size-5" />
           </Link>
         </Button>
@@ -111,13 +111,13 @@ export const getColumns = ({
       cell: ({ row }) => (
         <div className="pl-5">
           <TableSwitch
-            checked={row.original.published}
+            checked={row.original.is_active}
             toastSuccessMessage="Product status updated successfully."
             queryKey="products"
             onCheckedChange={() =>
               toggleProductPublishedStatus(
                 row.original.id,
-                row.original.published
+                row.original.is_active
               )
             }
           />
@@ -157,40 +157,35 @@ export const getColumns = ({
         return (
           <div className="flex items-center gap-1">
             {hasPermission("products", "canEdit") && (
-              <ProductFormSheet
+              <UpdateProductFormSheet
                 key={row.original.id}
                 title="Update Products"
                 description="Update necessary product information here"
                 submitButtonText="Update Product"
                 actionVerb="updated"
                 initialData={{
-                  name: row.original.name,
+                  base_price: Number(row.original.base_price),
                   description: row.original.description ?? "",
-                  image: row.original.image_url,
-                  sku: row.original.sku,
-                  category: row.original.category_id,
-                  costPrice: row.original.cost_price,
-                  salesPrice: row.original.selling_price,
-                  stock: row.original.stock,
-                  minStockThreshold: row.original.min_stock_threshold,
-                  slug: row.original.slug,
+                  images: row.original.images ?? [],
+                  specifications: typeof row.original.specifications === 'string'
+                    ? JSON.parse(row.original.specifications)
+                    : row.original.specifications || {},
                 }}
-                action={(formData) => editProduct(row.original.id, formData)}
-                previewImage={row.original.image_url}
+                action={(payload) => editProduct(row.original.id, payload)}
               >
                 <SheetTooltip content="Edit Product">
                   <PenSquare className="size-5" />
                 </SheetTooltip>
-              </ProductFormSheet>
+              </UpdateProductFormSheet>
             )}
 
             {hasPermission("products", "canDelete") && (
               <TableActionAlertDialog
-                title={`Delete ${row.original.name}?`}
+                title={`Delete ${row.original.model}?`}
                 description="This action cannot be undone. This will permanently delete the product and its associated data from the database."
                 tooltipContent="Delete Product"
                 actionButtonText="Delete Product"
-                toastSuccessMessage={`Product "${row.original.name}" deleted successfully!`}
+                toastSuccessMessage={`Product "${row.original.model}" deleted successfully!`}
                 queryKey="products"
                 action={() => deleteProduct(row.original.id)}
               >
