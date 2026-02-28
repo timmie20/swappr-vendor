@@ -14,7 +14,7 @@ import { TableSwitch } from "@/components/shared/table/TableSwitch";
 import { ImagePlaceholder } from "@/components/shared/ImagePlaceholder";
 import { SheetTooltip } from "@/components/shared/table/TableActionTooltip";
 import { TableActionAlertDialog } from "@/components/shared/table/TableActionAlertDialog";
-import ProductFormSheet from "../form/ProductFormSheet";
+import UpdateProductFormSheet from "../form/UpdateProductFormSheet";
 import { ProductBadgeVariants } from "@/constants/badge";
 import { Product } from "@/services/products/types";
 import { SkeletonColumn } from "@/types/skeleton";
@@ -157,28 +157,26 @@ export const getColumns = ({
         return (
           <div className="flex items-center gap-1">
             {hasPermission("products", "canEdit") && (
-              <ProductFormSheet
+              <UpdateProductFormSheet
                 key={row.original.id}
                 title="Update Products"
                 description="Update necessary product information here"
                 submitButtonText="Update Product"
                 actionVerb="updated"
                 initialData={{
-                  model: row.original.model,
-                  brand_id: row.original.brand?.id,
-                  category_id: row.original.category?.id,
-                  condition: row.original.condition,
-                  carrier_status: row.original.carrier_status as any,
                   base_price: Number(row.original.base_price),
                   description: row.original.description ?? "",
                   images: row.original.images ?? [],
+                  specifications: typeof row.original.specifications === 'string'
+                    ? JSON.parse(row.original.specifications)
+                    : row.original.specifications || {},
                 }}
-                action={(formData) => editProduct(row.original.id, formData)}
+                action={(payload) => editProduct(row.original.id, payload)}
               >
                 <SheetTooltip content="Edit Product">
                   <PenSquare className="size-5" />
                 </SheetTooltip>
-              </ProductFormSheet>
+              </UpdateProductFormSheet>
             )}
 
             {hasPermission("products", "canDelete") && (

@@ -16,6 +16,7 @@ import {
   ProductDetails,
 } from "./types";
 
+
 export async function fetchProducts(
   params: FetchProductsParams,
 ): Promise<FetchProductsResponse> {

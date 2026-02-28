@@ -29,6 +29,7 @@ export type Product = {
   min_stock_threshold?: number;
   slug?: string;
   sku?: string;
+  specifications?: any;
 };
 
 export interface FetchProductsParams {

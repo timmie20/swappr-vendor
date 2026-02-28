@@ -3,7 +3,7 @@
  * */
 
 import axiosInstance from "@/helpers/axiosInstance";
-import { productFormSchema } from "@/app/(dashboard)/products/_components/form/schema";
+import { productFormSchema, updateProductFormSchema } from "@/app/(dashboard)/products/_components/form/schema";
 import z from "zod";
 import { getToken } from "@/lib/cookies";
 import { TokenType } from "@/types/auth-types";
@@ -28,6 +28,20 @@ export const productEndpoint = {
         "Authorization": `Bearer ${token}`,
       },
     });
+    return data;
+  },
+  async update(productID: string, productData: z.infer<typeof updateProductFormSchema>) {
+    const token = await getToken(TokenType.AT);
+    const { data } = await axiosInstance.patch(
+      `/products/${productID}/update`,
+      productData,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return data;
   }
 };

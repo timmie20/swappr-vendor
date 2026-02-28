@@ -90,6 +90,35 @@ export const productFormSchema = z
     });
   });
 
+export const updateProductFormSchema = z.object({
+  base_price: z.coerce
+    .number({ invalid_type_error: "Base price must be a number" })
+    .positive({ message: "Base price must be greater than zero" })
+    .finite(),
+  description: z
+    .string()
+    .min(1, { message: "Description is required" })
+    .max(1000, "Description must be 1000 characters or less"),
+  images: z
+    .array(
+      z.union([
+        z.string().url({ message: "Each image must be a valid URL" }),
+        z.literal(""),
+      ])
+    )
+    .min(1, { message: "At least one image is required" })
+    .refine((imgs) => imgs.some((img) => img !== ""), {
+      message: "At least one valid image URL is required",
+    }),
+  specifications: z.object({
+    processor: z.string().min(1, { message: "Processor is required" }),
+    display: z.string().min(1, { message: "Display is required" }),
+    camera: z.string().min(1, { message: "Camera is required" }),
+    battery: z.string().min(1, { message: "Battery is required" }),
+    material: z.string().min(1, { message: "Material is required" }),
+  }),
+});
+
 
 export const productBulkFormSchema = z
   .object({

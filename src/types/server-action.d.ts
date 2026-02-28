@@ -25,35 +25,37 @@ export type VServerActionResponse =
 export type ProductServerActionResponse =
   | ValidationErrorsResponse
   | DbErrorResponse
-  | SuccessResponse
+  | (SuccessResponse & {
+    product?: any;
+  });
 
 export type CategoryServerActionResponse =
   | ValidationErrorsResponse
   | DbErrorResponse
   | (SuccessResponse & {
-      category: SBCategory;
-    });
+    category: SBCategory;
+  });
 
 export type CouponServerActionResponse =
   | ValidationErrorsResponse
   | DbErrorResponse
   | (SuccessResponse & {
-      coupon: SBCoupon;
-    });
+    coupon: SBCoupon;
+  });
 
 export type CustomerServerActionResponse =
   | ValidationErrorsResponse
   | DbErrorResponse
   | (SuccessResponse & {
-      customer: SBCustomer;
-    });
+    customer: SBCustomer;
+  });
 
 export type StaffServerActionResponse =
   | ValidationErrorsResponse
   | DbErrorResponse
   | (SuccessResponse & {
-      staff: SBStaff;
-    });
+    staff: SBStaff;
+  });
 
 export type ProfileServerActionResponse =
   | ValidationErrorsResponse
